@@ -14,13 +14,25 @@
 ```powershell
 git clone https://gitee.com/haveink/mechanics-competition-tools.git
 cd mechanics-competition-tools
-pwsh -File setup.ps1
+pwsh -File setup.ps1 -Competition
 ```
 
-脚本会做四件事：复制技能到 `~/.dsh/skills` → 把四个 MCP 写进 `~/.dsh/cordis.patch.yml`
-→ 检查 Python 依赖 → 打印还差什么。**改配置前会备份**。
+**三条命令搞定**（也可以双击 `setup.cmd` 走菜单）：
+
+| 时机 | 命令 | 做什么 |
+|---|---|---|
+| 赛前 | `setup.ps1 -Competition` | 复制技能 + 注册 4 个 MCP + **关掉其余 MCP**（合规、省 token），改前自动备份 |
+| 重启后 | `setup.ps1 -Verify` | 真的把每个 MCP 拉起来走 `initialize`+`tools/list`，报工具数与耗时 |
+| 出问题 | `setup.ps1 -Restore` | 回到最近一次备份（或用 `-BackupPath` 指定） |
+
+辅助：`-DryRun`（只看不改）、`-InstallDeps`（pip 装依赖）、
+`python scripts/mcp_switch.py --list`（ON/OFF 一眼看清）。
 
 装完重启 DSH。
+
+> 插件 `dsh-mech-workbench` 是 Host-only bundle，脚本装不了：
+> `dsh plugin --profile desktop add <本仓库>\plugins\dsh-mech-workbench`
+> 或走图形界面的创造模式。完整流程见 [docs/赛前10分钟.md](docs/赛前10分钟.md)。
 
 ---
 

@@ -15,19 +15,40 @@
     指定跑 sympy/lean4 的解释器；默认自动找一个装了 sympy 和 mcp 的
 .PARAMETER DryRun
     只打印将要做什么，不落盘
+.PARAMETER Competition
+    竞赛模式：只保留 document / sympy / sympy-physics / mech-io，
+    其余 MCP（browser/context7/everything/video/image/tools/eac/rea/…）全部 disabled。
+    既满足“赛时不得联网”的合规要求，也省 token（同分看 token）。
+.PARAMETER Verify
+    重启 DSH 之后跑：真的把每个 MCP 拉起来，走 initialize + tools/list，
+    报工具数与耗时；再查技能、插件、依赖。不写任何配置。
+.PARAMETER Restore
+    回滚到最近一次（或用 -BackupPath 指定）的 cordis.patch.yml 备份。
+.PARAMETER InstallDeps
+    先 pip 装缺的依赖（sympy / mcp / pyyaml / pillow / pymupdf / numpy / matplotlib）。
 .EXAMPLE
-    pwsh -File setup.ps1
+    pwsh -File setup.ps1 -Competition
 .EXAMPLE
-    pwsh -File setup.ps1 -DryRun
+    pwsh -File setup.ps1 -Verify
+.EXAMPLE
+    pwsh -File setup.ps1 -Restore
 #>
 [CmdletBinding()]
 param(
     [string]$DshHome = '',
     [string]$PythonExe = '',
-    [switch]$DryRun
+    [switch]$DryRun,
+    [switch]$Competition,
+    [switch]$Verify,
+    [switch]$Restore,
+    [string]$BackupPath = '',
+    [switch]$InstallDeps
 )
 
 $ErrorActionPreference = 'Stop'
+# PowerShell 控制台默认按 GBK 解子进程输出，Python 打中文会乱码
+$env:PYTHONIOENCODING = 'utf-8'
+$env:PYTHONUTF8 = '1'
 
 function Info($m) { Write-Host $m }
 function Step($m) { Write-Host "`n=== $m" -ForegroundColor Cyan }
@@ -44,6 +65,54 @@ if ([string]::IsNullOrWhiteSpace($PSScriptRoot)) {
 $RepoRoot = $scriptDir
 if ([string]::IsNullOrWhiteSpace($DshHome)) { $DshHome = Join-Path $env:USERPROFILE '.dsh' }
 $Cordis = Join-Path $DshHome 'cordis.patch.yml'
+
+# ---------- 工具函数：找一个能用 pyyaml 的解释器 ----------
+function Get-ToolPython {
+    $cands = @()
+    if ($PythonExe) { $cands += $PythonExe }
+    if ($env:DSH_MECH_PYTHON) { $cands += $env:DSH_MECH_PYTHON }
+    $cands += 'D:\anaconda\python.exe'
+    $cands += (Join-Path $env:LOCALAPPDATA 'Programs\Python\Python311\python.exe')
+    $p = Get-Command python -ErrorAction SilentlyContinue
+    if ($p) { $cands += $p.Source }
+    foreach ($c in ($cands | Where-Object { $_ -and (Test-Path $_) } | Select-Object -Unique)) {
+        & $c -c "import yaml" 2>$null
+        if ($LASTEXITCODE -eq 0) { return $c }
+    }
+    return $null
+}
+
+# ---------- 早退分支：-Verify / -Restore / -InstallDeps ----------
+if ($Verify) {
+    $py = Get-ToolPython
+    if (-not $py) { Bad '没找到带 pyyaml 的解释器（用 -PythonExe 指定）'; exit 1 }
+    Write-Host "`n=== 工具链自检（真的把每个 MCP 拉起来）===" -ForegroundColor Cyan
+    & $py (Join-Path $RepoRoot 'scripts\verify_setup.py')
+    exit $LASTEXITCODE
+}
+
+if ($Restore) {
+    $py = Get-ToolPython
+    if (-not $py) { Bad '没找到带 pyyaml 的解释器（用 -PythonExe 指定）'; exit 1 }
+    Write-Host "`n=== 回滚 MCP 配置 ===" -ForegroundColor Cyan
+    if ($BackupPath) {
+        & $py (Join-Path $RepoRoot 'scripts\mcp_switch.py') '--restore' $BackupPath
+    } else {
+        & $py (Join-Path $RepoRoot 'scripts\mcp_switch.py') '--restore'
+    }
+    exit $LASTEXITCODE
+}
+
+if ($InstallDeps) {
+    $py = $PythonExe
+    if (-not $py) { foreach ($c in @('D:\anaconda\python.exe', (Join-Path $env:LOCALAPPDATA 'Programs\Python\Python311\python.exe'))) { if (Test-Path $c) { $py = $c; break } } }
+    if (-not $py) { $p = Get-Command python -ErrorAction SilentlyContinue; if ($p) { $py = $p.Source } }
+    if (-not $py) { Bad '没找到 Python'; exit 1 }
+    Write-Host "`n=== 安装 Python 依赖（$py）===" -ForegroundColor Cyan
+    & $py -m pip install --disable-pip-version-check -q sympy mcp pyyaml pillow pymupdf numpy matplotlib
+    if ($LASTEXITCODE -eq 0) { Ok '依赖安装完成' } else { Warn 'pip 返回非 0，检查上面的输出' }
+    exit $LASTEXITCODE
+}
 
 Step '1/4 环境确认'
 Info "仓库    : $RepoRoot"
@@ -198,6 +267,20 @@ if (-not $py) {
     }
 }
 
+# ---------- 竞赛模式：只留必需 MCP ----------
+if ($Competition) {
+    $py = Get-ToolPython
+    if (-not $py) {
+        Warn '竞赛模式需要 pyyaml，已跳过（用 -PythonExe 指定解释器）'
+    } elseif ($DryRun) {
+        Info '  [DryRun] 将只保留 document / sympy / sympy-physics / mech-io'
+        Info '  [DryRun] 其余一律 disabled（browser/context7 属赛规禁止的联网工具）'
+    } else {
+        Step '5/5 竞赛模式：关掉无关 MCP（合规 + 省 token）'
+        & $py (Join-Path $RepoRoot 'scripts\mcp_switch.py') '--only' 'document,sympy,sympy-physics,mech-io'
+    }
+}
+
 # ---------- 插件安装检查 ----------
 # 插件是 Host-only bundle，脚本装不了；但「装没装」必须能查出来，
 # 否则最容易出现的情况是：以为装好了，赛时发现 9 个工具根本不存在。
@@ -238,8 +321,11 @@ Write-Host ''
 Write-Host '================ 还差这些（脚本管不了）================' -ForegroundColor Cyan
 Write-Host $pluginStatus
 Write-Host @"
-  2) 赛前关掉联网 MCP（违规项）
-       在 $Cordis 里给 browser / context7 加 disabled: true
+  2) 赛前切竞赛模式（合规 + 省 token）
+       pwsh -File setup.ps1 -Competition
+       只保留 document / sympy / sympy-physics / mech-io，
+       其余（browser/context7/everything/video/image/tools/eac/rea）自动 disabled
+       恢复：pwsh -File setup.ps1 -Restore
 
   3) 边界工具 mech-io（11 个）
        已随本脚本注册。自检：
