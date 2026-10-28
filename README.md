@@ -31,12 +31,17 @@ pwsh -File setup.ps1
 | `skills/undergrad-physics-skill/` | 本科物理与力学推导技能 | 六步流程 + **8 种验算方法**（F 量纲 / B 回代 / L 极限 / C 守恒 / D 定义域 / E 抽样 / I 独立方法 / J 一致性），FAIL 就回溯 |
 | `skills/undergrad-physics-skill/modules/material-mechanics.md` | 材料力学模块 | 补静不定、压杆稳定、能量法、动载荷——原版没有，这是自加的 |
 | `skills/math-skill/` | 数学推理技能 | 通用数学推导与验证 |
+| **`skills/mechanics-map/`** | **《Mechanics Map》全教材 17 章**（CC BY-SA 4.0） | 静力学、**运动学**、**动力学**、单自由度振动、惯性矩——查标准解法与例题 |
+| **`skills/mechanics-zh/`** | **中文速查**（自研） | 术语对照、符号约定、题型决策表、三类高频题骨架、量纲清单、答案模板 |
 | `plugins/dsh-mech-workbench/` | DSH 插件（9 工具） | 读题图、静定反力与 N/Q/M/T 图、截面几何、莫尔圆、出图自检、题目卡片 |
 | `mcp/sympy/` | sympy-mcp（Apache-2.0） | 32 个符号数学工具：解方程/方程组、ODE/PDE、积分、微分、矩阵特征值、LaTeX 输出 |
 | `mcp/lean4/` | lean-mcp 单文件 | Lean 4 形式化：类型检查、运行、query |
 | `docs/` | 赛规摘要、工具映射 | 赛前对表用 |
 
-**总大小约 4.6 MB** —— 远低于赛规 200 MB 的知识库上限。
+**总大小约 5.0 MB** —— 远低于赛规 200 MB 的知识库上限。
+
+> `mechanics-map` 是英文原书（CC BY-SA 4.0，署名 Jacob Moore and Contributors）；
+> 中文部分在 `mechanics-zh`，为自研整理。两套都**不含任何网络题解或赛题答案**。
 
 ---
 
@@ -110,4 +115,6 @@ plugin_manager → action: install_bundle
 - `mcp/sympy`：Apache-2.0（保留原 LICENSE）
 - `mcp/lean4`：自建单文件
 - `skills/math-skill`、`skills/undergrad-physics-skill`：MIT
+- `skills/mechanics-map`：**CC BY-SA 4.0**（署名 Jacob Moore and Contributors，派生须同协议）
+- `skills/mechanics-zh`：自研，随意使用
 - `plugins/dsh-mech-workbench`：MIT（保留原 LICENSE）
