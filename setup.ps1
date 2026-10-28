@@ -203,9 +203,16 @@ if (-not $py) {
 # 否则最容易出现的情况是：以为装好了，赛时发现 9 个工具根本不存在。
 $pluginName = 'dsh-mech-workbench'
 $pluginWhere = $null
-foreach ($p in @(
-        (Join-Path $DshHome "profiles\node_modules\$pluginName"),
-        (Join-Path $DshHome "plugins\$pluginName"))) {
+$candidates = @()
+$candidates += (Join-Path $DshHome "profiles\node_modules\$pluginName")
+$candidates += (Join-Path $DshHome "plugins\$pluginName")
+# 实际安装位在各 profile 自己的 node_modules 下（如 profiles\desktop\node_modules）
+$profilesDir = Join-Path $DshHome 'profiles'
+if (Test-Path $profilesDir) {
+    $candidates += Get-ChildItem $profilesDir -Directory -ErrorAction SilentlyContinue |
+        ForEach-Object { Join-Path $_.FullName "node_modules\$pluginName" }
+}
+foreach ($p in $candidates) {
     if (Test-Path $p) { $pluginWhere = $p; break }
 }
 if (-not $pluginWhere -and (Test-Path $Cordis)) {

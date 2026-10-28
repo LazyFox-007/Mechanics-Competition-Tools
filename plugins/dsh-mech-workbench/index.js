@@ -44,9 +44,13 @@ const SKILL_NAMES = [
  * 在独立自测中退化为恒等函数：定义形状保持一致，参数校验交给脚本。
  */
 let rawDefineTool = (options) => options
+let hostDefineTool = false
 try {
   const mod = await import('@deepseek-ai/dsh-tools')
-  if (typeof mod.defineTool === 'function') rawDefineTool = mod.defineTool
+  if (typeof mod.defineTool === 'function') {
+    rawDefineTool = mod.defineTool
+    hostDefineTool = true
+  }
 } catch {
   rawDefineTool = (options) => options
 }
@@ -62,13 +66,31 @@ try {
  *
  * 放在这里而不是每个 `return` 里手写，是为了新增工具自动受保护。
  */
+function compileParameters(spec) {
+  if (!spec || typeof spec !== 'object' || Array.isArray(spec)) {
+    return { type: 'object', properties: {} }
+  }
+  if (spec.type === 'object' || spec.properties !== undefined) return spec
+  const properties = {}
+  const required = []
+  for (const [key, value] of Object.entries(spec)) {
+    const { required: isRequired, ...schema } = value ?? {}
+    if (schema.type === 'json') delete schema.type
+    properties[key] = schema
+    if (isRequired === true) required.push(key)
+  }
+  return { type: 'object', properties, ...(required.length ? { required } : {}) }
+}
+
 function defineTool(definition) {
   const execute = definition?.execute
   if (typeof execute !== 'function') return rawDefineTool(definition)
-  return rawDefineTool({
+  const wrapped = {
     ...definition,
     execute: async (...args) => toLossless(await execute(...args)),
-  })
+  }
+  if (!hostDefineTool) wrapped.parameters = compileParameters(definition.parameters)
+  return rawDefineTool(wrapped)
 }
 
 /** 当前时间戳，用于默认文件名。 */
@@ -323,7 +345,7 @@ function registerTools(ctx) {
       prompt: { type: 'string', description: '自定义转写提示词（覆盖默认的结构化转写提示）' },
     },
     timeoutMs: 300000,
-    output: { schema: { type: 'json' }, render: (_args, value) => contentFrom(value, value.summary) },
+    output: { schema: { }, render: (_args, value) => contentFrom(value, value.summary) },
     async execute(args, exec) {
       const workspace = workspaceOf(args)
       const outDir = args.out_dir ? resolve(args.out_dir) : join(workspace, 'mech-images')
@@ -427,7 +449,7 @@ function registerTools(ctx) {
       font_size: { type: 'number', description: '转写面板字号，缺省 22' },
     },
     timeoutMs: 180000,
-    output: { schema: { type: 'json' }, render: (_args, value) => contentFrom(value, value.summary) },
+    output: { schema: { }, render: (_args, value) => contentFrom(value, value.summary) },
     async execute(args) {
       const workspace = workspaceOf(args)
       const out = args.out ? resolve(args.out) : join(workspace, 'mech-images', `compare-${stamp()}.png`)
@@ -473,7 +495,7 @@ function registerTools(ctx) {
     },
     timeoutMs: 180000,
     output: {
-      schema: { type: 'json' },
+      schema: { },
       render: (_args, value) => [{ type: 'text', text: value.summary }],
     },
     async execute(args) {
@@ -529,7 +551,7 @@ function registerTools(ctx) {
       workspace: { type: 'string' },
     },
     timeoutMs: 240000,
-    output: { schema: { type: 'json' }, render: (_args, value) => contentFrom(value, value.summary) },
+    output: { schema: { }, render: (_args, value) => contentFrom(value, value.summary) },
     async execute(args) {
       const workspace = workspaceOf(args)
       // 深拷贝：translateDiagramKeys 会把 kind 改写为 preset，不能side-effect 改到调用方传进来的对象
@@ -601,7 +623,7 @@ function registerTools(ctx) {
     },
     timeoutMs: 30000,
     output: {
-      schema: { type: 'json' },
+      schema: { },
       render: (_args, value) => [{ type: 'text', text: value.summary }],
     },
     async execute(args) {
@@ -662,7 +684,7 @@ function registerTools(ctx) {
       workspace: { type: 'string' },
     },
     timeoutMs: 300000,
-    output: { schema: { type: 'json' }, render: (_args, value) => contentFrom(value, value.summary) },
+    output: { schema: { }, render: (_args, value) => contentFrom(value, value.summary) },
     async execute(args) {
       const workspace = workspaceOf(args)
       const spec = { ...(args.spec ?? {}) }
@@ -747,7 +769,7 @@ function registerTools(ctx) {
     },
     timeoutMs: 300000,
     output: {
-      schema: { type: 'json' },
+      schema: { },
       render: (_args, value) => [{ type: 'text', text: value.summary }],
     },
     async execute(args) {
@@ -805,7 +827,7 @@ function registerTools(ctx) {
       workspace: { type: 'string' },
     },
     timeoutMs: 180000,
-    output: { schema: { type: 'json' }, render: (_args, value) => contentFrom(value, value.summary) },
+    output: { schema: { }, render: (_args, value) => contentFrom(value, value.summary) },
     async execute(args) {
       const workspace = workspaceOf(args)
       if (!args.src || typeof args.src !== 'string') {
@@ -874,7 +896,7 @@ function registerTools(ctx) {
     },
     timeoutMs: 300000,
     output: {
-      schema: { type: 'json' },
+      schema: { },
       render: (_args, value) => [{ type: 'text', text: value.summary }],
     },
     async execute(args) {
