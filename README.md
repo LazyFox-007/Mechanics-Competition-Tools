@@ -17,7 +17,7 @@ cd mechanics-competition-tools
 pwsh -File setup.ps1
 ```
 
-脚本会做四件事：复制技能到 `~/.dsh/skills` → 把两个 MCP 写进 `~/.dsh/cordis.patch.yml`
+脚本会做四件事：复制技能到 `~/.dsh/skills` → 把四个 MCP 写进 `~/.dsh/cordis.patch.yml`
 → 检查 Python 依赖 → 打印还差什么。**改配置前会备份**。
 
 装完重启 DSH。
@@ -36,6 +36,7 @@ pwsh -File setup.ps1
 | `plugins/dsh-mech-workbench/` | DSH 插件（9 工具） | 读题图、静定反力与 N/Q/M/T 图、截面几何、莫尔圆、出图自检、题目卡片 |
 | `mcp/sympy/` | sympy-mcp（Apache-2.0） | 32 个符号数学工具：解方程/方程组、ODE/PDE、积分、微分、矩阵特征值、LaTeX 输出 |
 | **`mcp/sympy-physics/`** | **自建（7 工具）** | **`sympy.physics` 四模块封装**：拉格朗日方程、运动学求导、合成运动（含科氏）、梁（反力/内力/转角/挠度）、量纲检查、单位换算 |
+| **`mcp/mech-io/`** | **自建（10 工具）** | **竞赛现场的边界工具**：`py_run` 跑 Python（绕开 shell 引号与 GBK）、`img_crop`/`pdf_page_crop` 取局部高清、`fig_lint`/`plot_audit` 图形自检、`scan_extremum`/`numeric_compare` 独立校核、`html_to_pdf`、`submission_pack` |
 | `mcp/lean4/` | lean-mcp 单文件 | Lean 4 形式化：类型检查、运行、query |
 | `docs/` | 赛规摘要、工具映射 | 赛前对表用 |
 
@@ -79,10 +80,13 @@ pwsh -File setup.ps1
 | 环节 | 用什么 | 为什么 |
 |---|---|---|
 | 读题 | `document` 的 `pdf_text` / `pdf_render`，或直接看图 | 读错一个数整题报废 |
+| 读公式下标 | `mech-io` 的 `pdf_page_crop`（300 dpi 局部） | 整页渲染再裁会糊，且容易按错比例 |
 | 符号推导 | `mcp__sympy__*` | 32 个工具，能出 LaTeX，方便写进答案 |
 | 内力图 / 静定反力 | 插件 `mech_analyze` / `mech_diagram` | 自动出图 + 8 项校核，直接当「校核」得分点 |
-| 验算 | `undergrad-physics-skill` 的 F/B/L 组合 | 过程分 20% 靠这个 |
-| 量纲检查 | 技能里的 F 方法 + sympy 单位 | 表达分 10% 靠这个 |
+| 验算 | `undergrad-physics-skill` 的 F/B/L 组合 + `mech-io` 的 `scan_extremum` / `numeric_compare` | 过程分 20% 靠这个 |
+| 量纲检查 | 技能里的 F 方法 + `sympy-physics` 的 `unit_check` | 表达分 10% 靠这个 |
+| 出图后自检 | `mech-io` 的 `plot_audit` + 插件 `viz_check` | 缺字形/越界靠前者，构图靠后者 |
+| 交付打包 | `mech-io` 的 `html_to_pdf` / `submission_pack` | 报告 PDF 与清单哈希不用手搓 |
 
 详细映射见 [docs/工具映射.md](docs/工具映射.md)。
 

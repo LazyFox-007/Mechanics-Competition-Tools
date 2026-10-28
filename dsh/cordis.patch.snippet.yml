@@ -29,6 +29,28 @@
         args:
           - '<REPO>/mcp/lean4/server.py'
 
+- insert:
+    - id: mech-sympy-physics
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: sympy-physics
+        transport: stdio
+        command: '<PYTHON>'
+        args:
+          - '<REPO>/mcp/sympy-physics/server.py'
+
+# 边界工具（10 个）：跑 Python / 裁图片与 PDF 局部 / 图形自检 / 密扫描 / HTML→PDF / 提交打包
+# 详见 mcp/mech-io/README.md
+- insert:
+    - id: mech-io
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: mech-io
+        transport: stdio
+        command: '<PYTHON>'
+        args:
+          - '<REPO>/mcp/mech-io/server.py'
+
 # ---- 赛前务必关掉的联网服务（赛规禁止联网检索）----
 # 如果 ~/.dsh/cordis.patch.yml 里有下面这些，给对应条目加 `disabled: true`：
 #   browser      （Playwright 浏览器自动化）

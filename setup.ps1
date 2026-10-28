@@ -147,6 +147,18 @@ if (-not $py) {
           - '$repoPosix/mcp/sympy-physics/server.py'
 "@
 
+    $blkIo = @"
+- insert:
+    - id: mech-io
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: mech-io
+        transport: stdio
+        command: '$pyYaml'
+        args:
+          - '$repoPosix/mcp/mech-io/server.py'
+"@
+
     $existing = ''
     if (Test-Path $Cordis) { $existing = Get-Content $Cordis -Raw -Encoding UTF8 }
 
@@ -155,6 +167,7 @@ if (-not $py) {
         'sympy'         = $blkSympy
         'lean4'         = $blkLean
         'sympy-physics' = $blkPhys
+        'mech-io'       = $blkIo
     }
     $missing = @()
     foreach ($name in $want.Keys) {
@@ -163,7 +176,7 @@ if (-not $py) {
     }
 
     if ($missing.Count -eq 0) {
-        Warn 'sympy / lean4 / sympy-physics 都已在配置里，不重复添加'
+        Warn 'sympy / lean4 / sympy-physics / mech-io 都已在配置里，不重复添加'
         Info '  想换成本仓库的副本，先删掉旧条目再跑一次'
     } elseif ($DryRun) {
         Info ('--- 将要追加: ' + ($missing -join ', ') + ' ---')
@@ -197,12 +210,17 @@ Write-Host @"
   2) 赛前关掉联网 MCP（违规项）
        在 $Cordis 里给 browser / context7 加 disabled: true
 
-  3) 读题工具（可选，来自另一个仓库）
+  3) 读题/交付的边界工具（mech-io，10 个）
+       已随本脚本注册。自检：
+       python $RepoRoot\mcp\mech-io\test\selftest.py
+
+  4) 可选：读题工具（来自另一个仓库）
        ai-agent-tools 的 document MCP：pdf_text / pdf_render
+       注：mech-io 的 pdf_page_crop 能直接取 PDF 局部，已覆盖大部分读题需求
 
-  4) 重启 DSH 生效
+  5) 重启 DSH 生效
 
-  5) 自检：问一句「现在有哪些 MCP 工具」
+  6) 自检：问一句「现在有哪些 MCP 工具」
 "@
 Write-Host '======================================================' -ForegroundColor Cyan
 if ($DryRun) { Write-Host "`n（DryRun：以上均未落盘）" -ForegroundColor Yellow }
