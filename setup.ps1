@@ -110,9 +110,8 @@ if (-not $py) {
     # YAML 单引号内反斜杠是字面量，不能再转义，否则路径会变成双反斜杠而失效
     $pyYaml = $py
 
-    $block = @"
+    $blkSympy = @"
 
-# ---- 力学竞赛工具（mechanics-competition-tools / setup.ps1 生成）----
 - insert:
     - id: mech-sympy
       name: '@deepseek-ai/dsh-mcp-client'
@@ -122,6 +121,9 @@ if (-not $py) {
         command: '$pyYaml'
         args:
           - '$repoPosix/mcp/sympy/server.py'
+"@
+
+    $blkLean = @"
 - insert:
     - id: mech-lean4
       name: '@deepseek-ai/dsh-mcp-client'
@@ -133,24 +135,42 @@ if (-not $py) {
           - '$repoPosix/mcp/lean4/server.py'
 "@
 
+    $blkPhys = @"
+- insert:
+    - id: mech-sympy-physics
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: sympy-physics
+        transport: stdio
+        command: '$pyYaml'
+        args:
+          - '$repoPosix/mcp/sympy-physics/server.py'
+"@
+
     $existing = ''
     if (Test-Path $Cordis) { $existing = Get-Content $Cordis -Raw -Encoding UTF8 }
 
-    $hasSympy = $existing -match 'serverName:\s*sympy'
-    $hasLean = $existing -match 'serverName:\s*lean4'
+    # 锚定匹配：避免 sympy 命中 sympy-physics
+    $want = [ordered]@{
+        'sympy'         = $blkSympy
+        'lean4'         = $blkLean
+        'sympy-physics' = $blkPhys
+    }
+    $missing = @()
+    foreach ($name in $want.Keys) {
+        $pat = '(?m)^\s*serverName:\s*' + [regex]::Escape($name) + '\s*$'
+        if ($existing -notmatch $pat) { $missing += $name }
+    }
 
-    if ($hasSympy -and $hasLean) {
-        Warn '配置里已有 sympy 和 lean4（多半来自 ai-agent-tools 的 community），不重复添加'
-        Info '  想用本仓库的副本，先手动删掉旧条目再跑一次'
+    if ($missing.Count -eq 0) {
+        Warn 'sympy / lean4 / sympy-physics 都已在配置里，不重复添加'
+        Info '  想换成本仓库的副本，先删掉旧条目再跑一次'
     } elseif ($DryRun) {
-        Info '--- 将要追加的配置 ---'
-        Info $block
+        Info ('--- 将要追加: ' + ($missing -join ', ') + ' ---')
+        foreach ($name in $missing) { Info $want[$name] }
     } else {
-        $toAdd = $block
-        if ($hasSympy -or $hasLean) {
-            $toAdd = ($block -split "`n" | Where-Object { $_ -notmatch 'serverName:\s*(sympy|lean4)' }) -join "`n"
-            Warn '已有一个，跳过重复的那个（另一半仍会写入）'
-        }
+        $toAdd = ''
+        foreach ($name in $missing) { $toAdd += $want[$name] + "`n" }
         if (Test-Path $Cordis) {
             $bak = "$Cordis.bak-mech-" + (Get-Date -Format 'yyyyMMdd-HHmmss')
             Copy-Item $Cordis $bak -Force
@@ -161,7 +181,7 @@ if (-not $py) {
         $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
         $merged = ($existing.TrimEnd() + "`n" + $toAdd)
         [System.IO.File]::WriteAllText($Cordis, $merged, $utf8NoBom)
-        Ok "已写入 $Cordis"
+        Ok ('已写入 ' + $Cordis + '（新增: ' + ($missing -join ', ') + '）')
     }
 }
 
