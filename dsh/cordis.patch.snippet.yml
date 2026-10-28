@@ -51,6 +51,17 @@
         args:
           - '<REPO>/mcp/mech-io/server.py'
 
+# 四个空白分支：能量法 / 桁架 / 刚体平面运动 / 压杆稳定（5 个工具）
+- insert:
+    - id: mech-solver
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: mech-solver
+        transport: stdio
+        command: '<PYTHON>'
+        args:
+          - '<REPO>/mcp/mech-solver/server.py'
+
 # ---- 赛前务必关掉的联网服务（赛规禁止联网检索）----
 # 如果 ~/.dsh/cordis.patch.yml 里有下面这些，给对应条目加 `disabled: true`：
 #   browser      （Playwright 浏览器自动化）

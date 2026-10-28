@@ -16,7 +16,7 @@
 .PARAMETER DryRun
     只打印将要做什么，不落盘
 .PARAMETER Competition
-    竞赛模式：只保留 document / sympy / sympy-physics / mech-io，
+    竞赛模式：只保留 document / sympy / sympy-physics / mech-io / mech-solver，
     其余 MCP（browser/context7/everything/video/image/tools/eac/rea/…）全部 disabled。
     既满足“赛时不得联网”的合规要求，也省 token（同分看 token）。
 .PARAMETER Verify
@@ -228,6 +228,18 @@ if (-not $py) {
           - '$repoPosix/mcp/mech-io/server.py'
 "@
 
+    $blkSolver = @"
+- insert:
+    - id: mech-solver
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: mech-solver
+        transport: stdio
+        command: '$pyYaml'
+        args:
+          - '$repoPosix/mcp/mech-solver/server.py'
+"@
+
     $existing = ''
     if (Test-Path $Cordis) { $existing = Get-Content $Cordis -Raw -Encoding UTF8 }
 
@@ -237,6 +249,7 @@ if (-not $py) {
         'lean4'         = $blkLean
         'sympy-physics' = $blkPhys
         'mech-io'       = $blkIo
+        'mech-solver'   = $blkSolver
     }
     $missing = @()
     foreach ($name in $want.Keys) {
@@ -245,7 +258,7 @@ if (-not $py) {
     }
 
     if ($missing.Count -eq 0) {
-        Warn 'sympy / lean4 / sympy-physics / mech-io 都已在配置里，不重复添加'
+        Warn 'sympy / lean4 / sympy-physics / mech-io / mech-solver 都已在配置里，不重复添加'
         Info '  想换成本仓库的副本，先删掉旧条目再跑一次'
     } elseif ($DryRun) {
         Info ('--- 将要追加: ' + ($missing -join ', ') + ' ---')
@@ -273,11 +286,11 @@ if ($Competition) {
     if (-not $py) {
         Warn '竞赛模式需要 pyyaml，已跳过（用 -PythonExe 指定解释器）'
     } elseif ($DryRun) {
-        Info '  [DryRun] 将只保留 document / sympy / sympy-physics / mech-io'
+        Info '  [DryRun] 将只保留 document / sympy / sympy-physics / mech-io / mech-solver'
         Info '  [DryRun] 其余一律 disabled（browser/context7 属赛规禁止的联网工具）'
     } else {
         Step '5/5 竞赛模式：关掉无关 MCP（合规 + 省 token）'
-        & $py (Join-Path $RepoRoot 'scripts\mcp_switch.py') '--only' 'document,sympy,sympy-physics,mech-io'
+        & $py (Join-Path $RepoRoot 'scripts\mcp_switch.py') '--only' 'document,sympy,sympy-physics,mech-io,mech-solver'
     }
 }
 
@@ -323,7 +336,7 @@ Write-Host $pluginStatus
 Write-Host @"
   2) 赛前切竞赛模式（合规 + 省 token）
        pwsh -File setup.ps1 -Competition
-       只保留 document / sympy / sympy-physics / mech-io，
+       只保留 document / sympy / sympy-physics / mech-io / mech-solver，
        其余（browser/context7/everything/video/image/tools/eac/rea）自动 disabled
        恢复：pwsh -File setup.ps1 -Restore
 

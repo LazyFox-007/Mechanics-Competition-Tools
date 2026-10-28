@@ -24,7 +24,7 @@ import time
 
 CFG = os.path.join(os.path.expanduser("~"), ".dsh", "cordis.patch.yml")
 DSH = os.path.join(os.path.expanduser("~"), ".dsh")
-COMPETITION = ["document", "sympy", "sympy-physics", "mech-io"]
+COMPETITION = ["document", "sympy", "sympy-physics", "mech-io", "mech-solver"]
 
 
 def load_entries():

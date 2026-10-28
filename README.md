@@ -21,7 +21,7 @@ pwsh -File setup.ps1 -Competition
 
 | 时机 | 命令 | 做什么 |
 |---|---|---|
-| 赛前 | `setup.ps1 -Competition` | 复制技能 + 注册 4 个 MCP + **关掉其余 MCP**（合规、省 token），改前自动备份 |
+| 赛前 | `setup.ps1 -Competition` | 复制技能 + 注册 5 个 MCP + **关掉其余 MCP**（合规、省 token），改前自动备份 |
 | 重启后 | `setup.ps1 -Verify` | 真的把每个 MCP 拉起来走 `initialize`+`tools/list`，报工具数与耗时 |
 | 出问题 | `setup.ps1 -Restore` | 回到最近一次备份（或用 `-BackupPath` 指定） |
 
@@ -49,6 +49,7 @@ pwsh -File setup.ps1 -Competition
 | `mcp/sympy/` | sympy-mcp（Apache-2.0） | 32 个符号数学工具：解方程/方程组、ODE/PDE、积分、微分、矩阵特征值、LaTeX 输出 |
 | **`mcp/sympy-physics/`** | **自建（7 工具）** | **`sympy.physics` 四模块封装**：拉格朗日方程、运动学求导、合成运动（含科氏）、梁（反力/内力/转角/挠度）、量纲检查、单位换算 |
 | **`mcp/mech-io/`** | **自建（11 工具）** | **竞赛现场的边界工具**：`py_run` 跑 Python（绕开 shell 引号与 GBK）、`img_crop`/`pdf_page_crop` 取局部高清、`fig_lint`/`plot_audit` 图形自检、`scan_extremum`/`numeric_compare` 独立校核、`kb_search` 查教材索引、`html_to_pdf`、`submission_pack` |
+| **`mcp/mech-solver/`** | **自建（5 工具）** | **补齐空白分支**：`energy_method`（卡氏/单位载荷）、`truss_solve`（桁架，含逐节点平衡校验）、`rigid_planar`（刚体平面运动/瞬心）、`buckling_solve`（压杆稳定） |
 | `mcp/lean4/` | lean-mcp 单文件 | Lean 4 形式化：类型检查、运行、query |
 | `docs/` | 赛规摘要、工具映射 | 赛前对表用 |
 
