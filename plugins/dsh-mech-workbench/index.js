@@ -489,7 +489,7 @@ function registerTools(ctx) {
         type: 'json',
         required: true,
         description:
-          '模型定义：{kind:"bar|beam|shaft", length, units, supports:[{x,type}], loads:[{type,x,value,dir}|{type:"distributed",x0,x1,q0,q1,dir}|{type:"point_moment",x,value}|{type:"point_torque",x,value}], section:{shape,params,E}, stations?}；符号约定见技能 engineering-mechanics',
+          '模型定义：{kind:"bar|beam|shaft", length, units, supports:[{x,type}], loads:[{type:"point_force",x,value,dir}|{type:"distributed",x0,x1,q0,q1,dir}|{type:"point_moment",x,value}|{type:"point_torque",x,value}], section:{shape,params,E}, stations?}；符号约定见技能 engineering-mechanics',
       },
       workspace: { type: 'string' },
     },
