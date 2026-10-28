@@ -83,7 +83,7 @@ def main():
     # 1. tools/list
     tl = c.request("tools/list")
     names = [t["name"] for t in tl["result"]["tools"]]
-    rec(len(names) == 10, "tools/list 返回 10 个工具", ",".join(names))
+    rec(len(names) == 11, "tools/list 返回 11 个工具", ",".join(names))
 
     # 2. io_info
     info = c.call("io_info")
@@ -204,6 +204,13 @@ def main():
     r2 = c.call("submission_pack", {"action": "manifest", "root": folder})
     rec(r2.get("ok") and r2["count"] >= 2, "submission_pack manifest",
         f"count={r2.get('count')}")
+
+    # 16. kb_search：查教材索引
+    r = c.call("kb_search", {"query": "friction", "limit": 3})
+    top = (r.get("results") or [{}])[0]
+    ok = r.get("ok") and r.get("files_matched", 0) >= 1 and top.get("top")
+    rec(bool(ok), "kb_search 命中教材并给出行号",
+        f"files={r.get('files_matched')} file={top.get('file')} line={(top.get('top') or [{}])[0].get('line')}")
 
     c.close()
 

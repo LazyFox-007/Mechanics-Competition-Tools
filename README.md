@@ -36,7 +36,7 @@ pwsh -File setup.ps1
 | `plugins/dsh-mech-workbench/` | DSH 插件（9 工具） | 读题图、静定反力与 N/Q/M/T 图、截面几何、莫尔圆、出图自检、题目卡片 |
 | `mcp/sympy/` | sympy-mcp（Apache-2.0） | 32 个符号数学工具：解方程/方程组、ODE/PDE、积分、微分、矩阵特征值、LaTeX 输出 |
 | **`mcp/sympy-physics/`** | **自建（7 工具）** | **`sympy.physics` 四模块封装**：拉格朗日方程、运动学求导、合成运动（含科氏）、梁（反力/内力/转角/挠度）、量纲检查、单位换算 |
-| **`mcp/mech-io/`** | **自建（10 工具）** | **竞赛现场的边界工具**：`py_run` 跑 Python（绕开 shell 引号与 GBK）、`img_crop`/`pdf_page_crop` 取局部高清、`fig_lint`/`plot_audit` 图形自检、`scan_extremum`/`numeric_compare` 独立校核、`html_to_pdf`、`submission_pack` |
+| **`mcp/mech-io/`** | **自建（11 工具）** | **竞赛现场的边界工具**：`py_run` 跑 Python（绕开 shell 引号与 GBK）、`img_crop`/`pdf_page_crop` 取局部高清、`fig_lint`/`plot_audit` 图形自检、`scan_extremum`/`numeric_compare` 独立校核、`kb_search` 查教材索引、`html_to_pdf`、`submission_pack` |
 | `mcp/lean4/` | lean-mcp 单文件 | Lean 4 形式化：类型检查、运行、query |
 | `docs/` | 赛规摘要、工具映射 | 赛前对表用 |
 

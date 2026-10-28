@@ -1,0 +1,1746 @@
+{
+ "generated": "2026-10-28T17:48:07",
+ "skill": "mechanics-map",
+ "note": "先查本索引定位「文件 + 行号」，再只读那几十行；不要整本读。",
+ "sources": [
+  {
+   "title": "1: Basics of Newtonian Mechanics",
+   "lines": 183,
+   "sections": [
+    {
+     "level": 2,
+     "title": "1: Basics of Newtonian Mechanics",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "1.0: Video Introduction to Chapter 1",
+     "line": 11
+    },
+    {
+     "level": 2,
+     "title": "1.1: Bodies",
+     "line": 16
+    },
+    {
+     "level": 2,
+     "title": "Bodies in Engineering Mechanics",
+     "line": 22
+    },
+    {
+     "level": 3,
+     "title": "Rigid versus Deformable Bodies",
+     "line": 26
+    },
+    {
+     "level": 3,
+     "title": "Particles versus Extended Bodies",
+     "line": 31
+    },
+    {
+     "level": 2,
+     "title": "1.2: Forces",
+     "line": 35
+    },
+    {
+     "level": 2,
+     "title": "Magnitude:",
+     "line": 42
+    },
+    {
+     "level": 2,
+     "title": "Direction:",
+     "line": 50
+    },
+    {
+     "level": 2,
+     "title": "Point of Application:",
+     "line": 55
+    },
+    {
+     "level": 2,
+     "title": "1.3: Moments",
+     "line": 62
+    },
+    {
+     "level": 2,
+     "title": "The Vector Representation of a Moment:",
+     "line": 71
+    },
+    {
+     "level": 3,
+     "title": "Magnitude:",
+     "line": 75
+    },
+    {
+     "level": 3,
+     "title": "Direction:",
+     "line": 83
+    },
+    {
+     "level": 3,
+     "title": "Axis of Rotation:",
+     "line": 89
+    },
+    {
+     "level": 2,
+     "title": "Calculating Moments:",
+     "line": 95
+    },
+    {
+     "level": 2,
+     "title": "1.4: Free Body Diagrams",
+     "line": 99
+    },
+    {
+     "level": 2,
+     "title": "Constructing the Free Body Diagram:",
+     "line": 106
+    },
+    {
+     "level": 2,
+     "title": "Worked Problems:",
+     "line": 125
+    },
+    {
+     "level": 2,
+     "title": "1.5: Newton's First Law",
+     "line": 138
+    },
+    {
+     "level": 2,
+     "title": "Net Forces:",
+     "line": 145
+    },
+    {
+     "level": 2,
+     "title": "Rotational Motion:",
+     "line": 149
+    },
+    {
+     "level": 2,
+     "title": "1.6: Newton's Second Law",
+     "line": 153
+    },
+    {
+     "level": 2,
+     "title": "Translational Motion:",
+     "line": 158
+    },
+    {
+     "level": 2,
+     "title": "Rotational Motion:",
+     "line": 164
+    },
+    {
+     "level": 2,
+     "title": "1.7: Newton's Third Law",
+     "line": 170
+    },
+    {
+     "level": 2,
+     "title": "1.8: Chapter 1 Homework Problems",
+     "line": 175
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/01-newtonian-basics.md"
+  },
+  {
+   "title": "2: Static Equilibrium in Concurrent Force Systems",
+   "lines": 118,
+   "sections": [
+    {
+     "level": 2,
+     "title": "2: Static Equilibrium in Concurrent Force Systems",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "2.0: Chapter 2 Video Introduction",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "2.1: Static Equilibrium",
+     "line": 13
+    },
+    {
+     "level": 2,
+     "title": "2.2: Point Forces as Vectors",
+     "line": 23
+    },
+    {
+     "level": 2,
+     "title": "Force Vector Representation:",
+     "line": 30
+    },
+    {
+     "level": 2,
+     "title": "Changing Force Vector Forms:",
+     "line": 37
+    },
+    {
+     "level": 2,
+     "title": "2.3: Principle of Transmissibility",
+     "line": 47
+    },
+    {
+     "level": 2,
+     "title": "2.4: Concurrent Forces",
+     "line": 52
+    },
+    {
+     "level": 2,
+     "title": "2.5: Equilibrium Analysis for Concurrent Force Systems",
+     "line": 57
+    },
+    {
+     "level": 2,
+     "title": "Finding the Equilibrium Equations:",
+     "line": 69
+    },
+    {
+     "level": 2,
+     "title": "2.6: Chapter 2 Homework Problems",
+     "line": 92
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/02-static-concurrent-forces.md"
+  },
+  {
+   "title": "3: Static Equilibrium in Rigid Body Systems",
+   "lines": 256,
+   "sections": [
+    {
+     "level": 2,
+     "title": "3: Static Equilibrium in Rigid Body Systems",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "3.0: Video Introduction to Chapter 3",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "3.1: Moment of a Force about a Point (Scalar Calculation)",
+     "line": 13
+    },
+    {
+     "level": 2,
+     "title": "The Scalar Method in 2 Dimensions",
+     "line": 23
+    },
+    {
+     "level": 2,
+     "title": "The Scalar Model in 3 Dimensions",
+     "line": 30
+    },
+    {
+     "level": 2,
+     "title": "3.2: Varignon's Theorem",
+     "line": 39
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 47
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 51
+    },
+    {
+     "level": 2,
+     "title": "3.3: Couples",
+     "line": 55
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 67
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 71
+    },
+    {
+     "level": 2,
+     "title": "3.4: Moment about a Point (Vector)",
+     "line": 75
+    },
+    {
+     "level": 2,
+     "title": "The Vector Method in 2 and 3 Dimensions",
+     "line": 82
+    },
+    {
+     "level": 2,
+     "title": "3.5: Moment of a Force About an Axis",
+     "line": 92
+    },
+    {
+     "level": 2,
+     "title": "Calculating the Moment About an Axis via the Dot Product",
+     "line": 98
+    },
+    {
+     "level": 2,
+     "title": "3.6: Equilibrium Analysis for a Rigid Body",
+     "line": 105
+    },
+    {
+     "level": 2,
+     "title": "Finding the Equilibrium Equations",
+     "line": 127
+    },
+    {
+     "level": 2,
+     "title": "3.7: Chapter 3 Homework Problems",
+     "line": 143
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 161
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 166
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 173
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 179
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 186
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 191
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 199
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 207
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 213
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 220
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 227
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 234
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 241
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 247
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 252
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/03-static-rigid-bodies.md"
+  },
+  {
+   "title": "4: Statically Equivalent Systems",
+   "lines": 169,
+   "sections": [
+    {
+     "level": 2,
+     "title": "4: Statically Equivalent Systems",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "4.0: Video Introduction to Chapter 4",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "4.1: Statically Equivalent Systems",
+     "line": 13
+    },
+    {
+     "level": 2,
+     "title": "Determining if Forces are Statically Equivalent:",
+     "line": 19
+    },
+    {
+     "level": 2,
+     "title": "Finding a Single Equivalent Point Force:",
+     "line": 23
+    },
+    {
+     "level": 2,
+     "title": "4.2: Resolution of a Force into a Force and a Couple",
+     "line": 34
+    },
+    {
+     "level": 2,
+     "title": "4.3: Equivalent Force Couple System",
+     "line": 45
+    },
+    {
+     "level": 2,
+     "title": "4.4: Distributed Forces",
+     "line": 56
+    },
+    {
+     "level": 2,
+     "title": "Representing Distributed Forces:",
+     "line": 63
+    },
+    {
+     "level": 2,
+     "title": "Analyzing Distributed Forces:",
+     "line": 69
+    },
+    {
+     "level": 2,
+     "title": "4.5: Equivalent Point Load",
+     "line": 73
+    },
+    {
+     "level": 2,
+     "title": "Finding the Equivalent Point Load",
+     "line": 83
+    },
+    {
+     "level": 2,
+     "title": "Using Integration in 2D Surface Force Problems:",
+     "line": 90
+    },
+    {
+     "level": 2,
+     "title": "Using the Area and Centroid in 2D Surface Force Problems:",
+     "line": 99
+    },
+    {
+     "level": 2,
+     "title": "Using Integration in 3D Surface Force Problems:",
+     "line": 105
+    },
+    {
+     "level": 2,
+     "title": "Using Volume and Center of Volume in 3D Surface Force Problems:",
+     "line": 115
+    },
+    {
+     "level": 2,
+     "title": "Using Integration in Body Force Problems:",
+     "line": 120
+    },
+    {
+     "level": 2,
+     "title": "4.6: Chapter 4 Homework Problems",
+     "line": 137
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/04-statically-equivalent-systems.md"
+  },
+  {
+   "title": "5: Engineering Structures",
+   "lines": 214,
+   "sections": [
+    {
+     "level": 2,
+     "title": "5: Engineering Structures",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "5.0: Video Introduction to Chapter 5",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "5.1: Structures",
+     "line": 13
+    },
+    {
+     "level": 2,
+     "title": "Internal and External Forces:",
+     "line": 22
+    },
+    {
+     "level": 2,
+     "title": "Types of Structures:",
+     "line": 28
+    },
+    {
+     "level": 3,
+     "title": "Trusses:",
+     "line": 32
+    },
+    {
+     "level": 3,
+     "title": "Frames and Machines:",
+     "line": 37
+    },
+    {
+     "level": 2,
+     "title": "5.2: Two-Force Members",
+     "line": 42
+    },
+    {
+     "level": 2,
+     "title": "Why the Forces Must Be Equal, Opposite and Collinear:",
+     "line": 48
+    },
+    {
+     "level": 2,
+     "title": "Why Two-Force Members Are Important:",
+     "line": 56
+    },
+    {
+     "level": 2,
+     "title": "5.3: Trusses",
+     "line": 61
+    },
+    {
+     "level": 2,
+     "title": "Analyzing Trusses:",
+     "line": 67
+    },
+    {
+     "level": 2,
+     "title": "5.4: Method of Joints",
+     "line": 75
+    },
+    {
+     "level": 2,
+     "title": "Using the Method of Joints:",
+     "line": 80
+    },
+    {
+     "level": 2,
+     "title": "5.5: Method of Sections",
+     "line": 100
+    },
+    {
+     "level": 2,
+     "title": "Using the Method of Sections:",
+     "line": 105
+    },
+    {
+     "level": 2,
+     "title": "5.6: Frames and Machines",
+     "line": 127
+    },
+    {
+     "level": 2,
+     "title": "Analyzing Frames and Machines:",
+     "line": 133
+    },
+    {
+     "level": 2,
+     "title": "5.7: Analysis of Frames and Machines",
+     "line": 138
+    },
+    {
+     "level": 2,
+     "title": "The Process for Analyzing Frames and Machines:",
+     "line": 143
+    },
+    {
+     "level": 2,
+     "title": "5.8: Chapter 5 Homework Problems",
+     "line": 166
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/05-engineering-structures.md"
+  },
+  {
+   "title": "6: Friction and Friction Applications",
+   "lines": 236,
+   "sections": [
+    {
+     "level": 2,
+     "title": "6: Friction and Friction Applications",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "6.0: Video Introduction to Chapter 6",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "6.1: Dry Friction",
+     "line": 13
+    },
+    {
+     "level": 2,
+     "title": "6.2: Slipping vs Tipping",
+     "line": 30
+    },
+    {
+     "level": 2,
+     "title": "Determining the Force Required to Make an Object \"Slip\":",
+     "line": 39
+    },
+    {
+     "level": 2,
+     "title": "Determining the Force Required to Make an Object \"Tip\":",
+     "line": 43
+    },
+    {
+     "level": 2,
+     "title": "6.3: Wedges",
+     "line": 53
+    },
+    {
+     "level": 2,
+     "title": "6.4: Power Screws",
+     "line": 64
+    },
+    {
+     "level": 2,
+     "title": "Static Analysis of Power Screws:",
+     "line": 70
+    },
+    {
+     "level": 2,
+     "title": "Self-Locking Screws",
+     "line": 84
+    },
+    {
+     "level": 2,
+     "title": "6.5: Bearing Friction",
+     "line": 103
+    },
+    {
+     "level": 2,
+     "title": "6.6: Disc Friction",
+     "line": 116
+    },
+    {
+     "level": 2,
+     "title": "Hollow Circular Contact Area",
+     "line": 123
+    },
+    {
+     "level": 2,
+     "title": "Solid Circular Contact Area",
+     "line": 135
+    },
+    {
+     "level": 2,
+     "title": "Circular Arcs (Disc Brakes)",
+     "line": 140
+    },
+    {
+     "level": 2,
+     "title": "6.7: Belt Friction",
+     "line": 150
+    },
+    {
+     "level": 2,
+     "title": "Friction in Flat Belts",
+     "line": 159
+    },
+    {
+     "level": 2,
+     "title": "Friction in V Belts",
+     "line": 165
+    },
+    {
+     "level": 2,
+     "title": "Torque and Power Transmission in Belt-Driven Systems",
+     "line": 173
+    },
+    {
+     "level": 2,
+     "title": "6.8: Chapter 6 Homework Problems",
+     "line": 192
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/06-friction.md"
+  },
+  {
+   "title": "7: Particle Kinematics",
+   "lines": 256,
+   "sections": [
+    {
+     "level": 2,
+     "title": "7: Particle Kinematics",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "7.0: Video Introduction to Chapter 7",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "7.1: One-Dimensional Continuous Motion",
+     "line": 13
+    },
+    {
+     "level": 2,
+     "title": "Constant Acceleration Systems:",
+     "line": 29
+    },
+    {
+     "level": 2,
+     "title": "7.2: One-Dimensional Noncontinuous Motion",
+     "line": 41
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 54
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 58
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 62
+    },
+    {
+     "level": 2,
+     "title": "7.3: Two-Dimensional Kinematics with Rectangular Coordinates",
+     "line": 66
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 82
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 86
+    },
+    {
+     "level": 2,
+     "title": "7.4: Two-Dimensional Kinematics with Normal-Tangential Coordinates",
+     "line": 90
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 110
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 114
+    },
+    {
+     "level": 2,
+     "title": "7.5: Two-Dimensional Motion with Polar Coordinates",
+     "line": 118
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 136
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 140
+    },
+    {
+     "level": 2,
+     "title": "7.6: Dependent Motion Systems",
+     "line": 144
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 155
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 159
+    },
+    {
+     "level": 2,
+     "title": "7.7: Relative Motion Systems",
+     "line": 163
+    },
+    {
+     "level": 2,
+     "title": "Relative Motion in One Dimension:",
+     "line": 172
+    },
+    {
+     "level": 2,
+     "title": "Relative Motion in Two Dimension:",
+     "line": 181
+    },
+    {
+     "level": 2,
+     "title": "7.8: Chapter 7 Homework Problems",
+     "line": 191
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 204
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 210
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 215
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 220
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 225
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 230
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 236
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 242
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 247
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 252
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/07-particle-kinematics.md"
+  },
+  {
+   "title": "8: Newton's Second Law for Particles",
+   "lines": 147,
+   "sections": [
+    {
+     "level": 2,
+     "title": "8: Newton's Second Law for Particles",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "8.0: Video Introduction to Chapter 8",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "8.1: One-Dimensional Equations of Motion",
+     "line": 13
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 25
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 31
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 37
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 43
+    },
+    {
+     "level": 2,
+     "title": "8.2: Equations of Motion in Rectangular Coordinates",
+     "line": 47
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 58
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 62
+    },
+    {
+     "level": 2,
+     "title": "8.3: Equations of Motion in Normal-Tangential Coordinates",
+     "line": 66
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 80
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 86
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 92
+    },
+    {
+     "level": 2,
+     "title": "8.4: Equations of Motion in Polar Coordinates",
+     "line": 96
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 109
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 113
+    },
+    {
+     "level": 2,
+     "title": "8.5: Chapter 8 Homework Problems",
+     "line": 117
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 124
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 130
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 135
+    },
+    {
+     "level": 2,
+     "title": "Exercise \\(\\)",
+     "line": 140
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/08-newton-second-law-particles.md"
+  },
+  {
+   "title": "9: Work and Energy in Particles",
+   "lines": 121,
+   "sections": [
+    {
+     "level": 2,
+     "title": "9: Work and Energy in Particles",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "9.0: Video Introduction to Chapter 9",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "9.1: Conservation of Energy for Particles",
+     "line": 13
+    },
+    {
+     "level": 2,
+     "title": "Work:",
+     "line": 21
+    },
+    {
+     "level": 2,
+     "title": "Energy:",
+     "line": 32
+    },
+    {
+     "level": 2,
+     "title": "9.2: Power and Efficiency for Particles",
+     "line": 58
+    },
+    {
+     "level": 2,
+     "title": "Power",
+     "line": 64
+    },
+    {
+     "level": 2,
+     "title": "Efficiency",
+     "line": 71
+    },
+    {
+     "level": 2,
+     "title": "9.3: Conservation of Energy for Systems of Particles",
+     "line": 83
+    },
+    {
+     "level": 2,
+     "title": "9.4: Chapter 9 Homework Problems",
+     "line": 96
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/09-work-energy-particles.md"
+  },
+  {
+   "title": "10: Impulse and Momentum in Particles",
+   "lines": 181,
+   "sections": [
+    {
+     "level": 2,
+     "title": "10: Impulse and Momentum in Particles",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "10.0: Video Introduction to Chapter 10",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "10.1: Impulse-Momentum Equations for a Particle",
+     "line": 13
+    },
+    {
+     "level": 2,
+     "title": "Impulse:",
+     "line": 24
+    },
+    {
+     "level": 2,
+     "title": "Momentum:",
+     "line": 30
+    },
+    {
+     "level": 3,
+     "title": "Conservation of Momentum:",
+     "line": 34
+    },
+    {
+     "level": 2,
+     "title": "10.2: Surface Collisions and the Coefficient of Restitution",
+     "line": 46
+    },
+    {
+     "level": 2,
+     "title": "10.3: One-Dimensional Particle Collisions",
+     "line": 62
+    },
+    {
+     "level": 2,
+     "title": "Elastic Collisions",
+     "line": 75
+    },
+    {
+     "level": 2,
+     "title": "Inelastic Collisions",
+     "line": 81
+    },
+    {
+     "level": 2,
+     "title": "Semi-Elastic Collision",
+     "line": 86
+    },
+    {
+     "level": 2,
+     "title": "10.4: Two-Dimensional Particle Collisions",
+     "line": 102
+    },
+    {
+     "level": 2,
+     "title": "Inelastic Collisions:",
+     "line": 114
+    },
+    {
+     "level": 2,
+     "title": "Elastic and Semi-Elastic Collisions:",
+     "line": 120
+    },
+    {
+     "level": 2,
+     "title": "10.5: Steady-Flow Devices",
+     "line": 138
+    },
+    {
+     "level": 2,
+     "title": "Finding Mass Flow Rate:",
+     "line": 151
+    },
+    {
+     "level": 2,
+     "title": "10.6: Chapter 10 Homework Problems",
+     "line": 160
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/10-impulse-momentum-particles.md"
+  },
+  {
+   "title": "11: Rigid Body Kinematics",
+   "lines": 220,
+   "sections": [
+    {
+     "level": 2,
+     "title": "11: Rigid Body Kinematics",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "11.1: Fixed-Axis Rotation in Rigid Bodies",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "Angular Position, Velocity, and Acceleration:",
+     "line": 14
+    },
+    {
+     "level": 2,
+     "title": "Velocity and Acceleration of a Point on a Rotating Body:",
+     "line": 23
+    },
+    {
+     "level": 2,
+     "title": "11.2: Belt- and Gear-Driven Systems",
+     "line": 38
+    },
+    {
+     "level": 2,
+     "title": "Position, Velocity, and Acceleration in Belt-Driven Systems",
+     "line": 44
+    },
+    {
+     "level": 2,
+     "title": "Position, Velocity, and Acceleration in Gear Systems:",
+     "line": 54
+    },
+    {
+     "level": 2,
+     "title": "11.3: Absolute Motion Analysis",
+     "line": 70
+    },
+    {
+     "level": 2,
+     "title": "Utilizing Absolute Motion Analysis:",
+     "line": 76
+    },
+    {
+     "level": 2,
+     "title": "11.4: Relative Motion Analysis",
+     "line": 95
+    },
+    {
+     "level": 2,
+     "title": "Utilizing Relative Motion Analysis",
+     "line": 102
+    },
+    {
+     "level": 2,
+     "title": "Alternate Notation for Rigid Body Relative Motion",
+     "line": 121
+    },
+    {
+     "level": 2,
+     "title": "11.5: Rotating Frame Analysis",
+     "line": 141
+    },
+    {
+     "level": 2,
+     "title": "Reference Frames:",
+     "line": 148
+    },
+    {
+     "level": 2,
+     "title": "Rotating Frames:",
+     "line": 155
+    },
+    {
+     "level": 2,
+     "title": "11.6: Chapter 11 Homework Problems",
+     "line": 198
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/11-rigid-body-kinematics.md"
+  },
+  {
+   "title": "12: Newton's Second Law for Rigid Bodies",
+   "lines": 113,
+   "sections": [
+    {
+     "level": 2,
+     "title": "12: Newton's Second Law for Rigid Bodies",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "12.1: Rigid Body Translation",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "12.2: Fixed-Axis Rotation",
+     "line": 23
+    },
+    {
+     "level": 2,
+     "title": "Balanced Rotation",
+     "line": 33
+    },
+    {
+     "level": 2,
+     "title": "Unbalanced Rotation",
+     "line": 41
+    },
+    {
+     "level": 2,
+     "title": "12.3: Rigid-Body General Planar Motion",
+     "line": 56
+    },
+    {
+     "level": 2,
+     "title": "12.4: Multi-Body General Planar Motion",
+     "line": 79
+    },
+    {
+     "level": 2,
+     "title": "12.5: Chapter 12 Homework Problems",
+     "line": 91
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/12-newton-second-law-rigid-bodies.md"
+  },
+  {
+   "title": "13: Work and Energy in Rigid Bodies",
+   "lines": 87,
+   "sections": [
+    {
+     "level": 2,
+     "title": "13: Work and Energy in Rigid Bodies",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "13.1: Conservation of Energy for Rigid Bodies",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "Work in Rigid Body Problems:",
+     "line": 16
+    },
+    {
+     "level": 2,
+     "title": "Energy:",
+     "line": 23
+    },
+    {
+     "level": 2,
+     "title": "13.2: Power and Efficiency in Rigid Bodies",
+     "line": 53
+    },
+    {
+     "level": 2,
+     "title": "Power",
+     "line": 59
+    },
+    {
+     "level": 2,
+     "title": "Efficiency",
+     "line": 68
+    },
+    {
+     "level": 2,
+     "title": "13.3: Chapter 13 Homework Problems",
+     "line": 79
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/13-work-energy-rigid-bodies.md"
+  },
+  {
+   "title": "14: Impulse and Momentum in Rigid Bodies",
+   "lines": 72,
+   "sections": [
+    {
+     "level": 2,
+     "title": "14: Impulse and Momentum in Rigid Bodies",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "14.1: Impulse-Momentum Equations for a Rigid Body",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "Impulse:",
+     "line": 20
+    },
+    {
+     "level": 2,
+     "title": "Momentum:",
+     "line": 28
+    },
+    {
+     "level": 2,
+     "title": "14.2: Rigid Body Surface Collisions",
+     "line": 45
+    },
+    {
+     "level": 2,
+     "title": "14.3: Chapter 14 Homework Problems",
+     "line": 61
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/14-impulse-momentum-rigid-bodies.md"
+  },
+  {
+   "title": "15: Vibrations with One Degree of Freedom",
+   "lines": 246,
+   "sections": [
+    {
+     "level": 2,
+     "title": "15: Vibrations with One Degree of Freedom",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "15.1: Undamped Free Vibrations",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 60
+    },
+    {
+     "level": 2,
+     "title": "Example \\(\\)",
+     "line": 64
+    },
+    {
+     "level": 2,
+     "title": "15.2: Viscous Damped Free Vibrations",
+     "line": 70
+    },
+    {
+     "level": 2,
+     "title": "Four Viscous Damping Cases:",
+     "line": 117
+    },
+    {
+     "level": 3,
+     "title": "1. \\(\\zeta = 0\\): Undamped",
+     "line": 121
+    },
+    {
+     "level": 3,
+     "title": "2. \\(\\zeta > 1\\): Overdamped",
+     "line": 126
+    },
+    {
+     "level": 3,
+     "title": "3. \\(\\zeta = 1\\): Critically damped",
+     "line": 134
+    },
+    {
+     "level": 3,
+     "title": "4. \\(\\zeta < 1\\): Underdamped",
+     "line": 142
+    },
+    {
+     "level": 2,
+     "title": "Comparison of Viscous Damping Cases:",
+     "line": 155
+    },
+    {
+     "level": 2,
+     "title": "15.3: Friction (Coulomb) Damped Free Vibrations",
+     "line": 159
+    },
+    {
+     "level": 2,
+     "title": "Comparison to Viscous Underdamped System",
+     "line": 178
+    },
+    {
+     "level": 2,
+     "title": "15.4: Undamped Harmonic Forced Vibrations",
+     "line": 183
+    },
+    {
+     "level": 2,
+     "title": "Steady-State Response:",
+     "line": 211
+    },
+    {
+     "level": 3,
+     "title": "Amplitude of Forced Vibration",
+     "line": 215
+    },
+    {
+     "level": 2,
+     "title": "Rotating Unbalance:",
+     "line": 226
+    },
+    {
+     "level": 2,
+     "title": "15.5: Viscous Damped Harmonic Forced Vibrations",
+     "line": 232
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/15-vibrations-one-dof.md"
+  },
+  {
+   "title": "16: Appendix 1 - Vector and Matrix Math",
+   "lines": 176,
+   "sections": [
+    {
+     "level": 2,
+     "title": "16: Appendix 1 - Vector and Matrix Math",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "16.1: Vectors",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "Vector Representation:",
+     "line": 21
+    },
+    {
+     "level": 2,
+     "title": "Converting Between Vector Representations in 2D",
+     "line": 30
+    },
+    {
+     "level": 3,
+     "title": "Going from a Magnitude and Direction to Component Form",
+     "line": 34
+    },
+    {
+     "level": 3,
+     "title": "Going from Component Form to Magnitude and Direction",
+     "line": 39
+    },
+    {
+     "level": 2,
+     "title": "Converting Between Vector Representations in 3D",
+     "line": 45
+    },
+    {
+     "level": 3,
+     "title": "Alternative Method for Finding 3D Vector Components",
+     "line": 50
+    },
+    {
+     "level": 2,
+     "title": "16.2: Vector Addition",
+     "line": 67
+    },
+    {
+     "level": 2,
+     "title": "16.3: Dot Product",
+     "line": 81
+    },
+    {
+     "level": 2,
+     "title": "16.4: Cross Product",
+     "line": 98
+    },
+    {
+     "level": 2,
+     "title": "Calculating the Cross Product",
+     "line": 106
+    },
+    {
+     "level": 2,
+     "title": "16.5: Solving Systems of Equations with Matrices",
+     "line": 124
+    },
+    {
+     "level": 2,
+     "title": "Converting a System of Equations to a Matrix Equation:",
+     "line": 135
+    },
+    {
+     "level": 2,
+     "title": "Solving the Matrix Equation:",
+     "line": 144
+    },
+    {
+     "level": 2,
+     "title": "16.6: Appendix 1 Homework Problems",
+     "line": 154
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/16-vector-matrix-math.md"
+  },
+  {
+   "title": "17: Appendix 2 - Moment Integrals",
+   "lines": 310,
+   "sections": [
+    {
+     "level": 2,
+     "title": "17: Appendix 2 - Moment Integrals",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "17.1: Moment Integrals",
+     "line": 8
+    },
+    {
+     "level": 2,
+     "title": "1D, 2D, and 3D Moment Integrals",
+     "line": 26
+    },
+    {
+     "level": 2,
+     "title": "Force, Area/Volume, and Mass Moment Integrals",
+     "line": 30
+    },
+    {
+     "level": 2,
+     "title": "First vs Second Moment Integrals",
+     "line": 34
+    },
+    {
+     "level": 2,
+     "title": "Rectangular vs Polar Moment Integrals",
+     "line": 38
+    },
+    {
+     "level": 2,
+     "title": "17.2: Centroids of Areas via Integration",
+     "line": 46
+    },
+    {
+     "level": 2,
+     "title": "Finding the Centroid via the First Moment Integral",
+     "line": 57
+    },
+    {
+     "level": 2,
+     "title": "Using Symmetry as a Shortcut",
+     "line": 68
+    },
+    {
+     "level": 2,
+     "title": "17.3: Centroids in Volumes and Center of Mass via Integration",
+     "line": 78
+    },
+    {
+     "level": 2,
+     "title": "Finding the Centroid of a Volume via the First Moment Integral",
+     "line": 90
+    },
+    {
+     "level": 3,
+     "title": "Using Symmetry as a Shortcut",
+     "line": 100
+    },
+    {
+     "level": 2,
+     "title": "Finding the Center of Mass for Non-Uniform Density Shapes",
+     "line": 104
+    },
+    {
+     "level": 2,
+     "title": "17.4: Centroids and Centers of Mass via Method of Composite Parts",
+     "line": 120
+    },
+    {
+     "level": 2,
+     "title": "Finding the Centroid via the Method of Composite Parts",
+     "line": 127
+    },
+    {
+     "level": 2,
+     "title": "Finding the Center of Mass via the Method of Composite Parts",
+     "line": 136
+    },
+    {
+     "level": 2,
+     "title": "17.5: Area Moments of Inertia via Integration",
+     "line": 155
+    },
+    {
+     "level": 2,
+     "title": "Bending Stresses and the Second Area Moment",
+     "line": 164
+    },
+    {
+     "level": 3,
+     "title": "Calculating the Rectangular Area Moment of Inertia via Integration",
+     "line": 171
+    },
+    {
+     "level": 2,
+     "title": "Torsional Stresses and the Polar Moment of Inertia",
+     "line": 177
+    },
+    {
+     "level": 2,
+     "title": "Calculating the Polar Area Moment of Inertia via Integration",
+     "line": 183
+    },
+    {
+     "level": 2,
+     "title": "17.6: Mass Moments of Inertia via Integration",
+     "line": 194
+    },
+    {
+     "level": 2,
+     "title": "The Mass Moment of Inertia and Angular Accelerations",
+     "line": 203
+    },
+    {
+     "level": 2,
+     "title": "Calculating the Mass Moment of Inertia via Integration",
+     "line": 217
+    },
+    {
+     "level": 2,
+     "title": "17.7: Moments of Inertia via Composite Parts and Parallel Axis Theorem",
+     "line": 229
+    },
+    {
+     "level": 2,
+     "title": "The Parallel Axis Theorem",
+     "line": 236
+    },
+    {
+     "level": 2,
+     "title": "Using the Method of Composite Parts to Find the Moment of Inertia",
+     "line": 246
+    },
+    {
+     "level": 2,
+     "title": "17.8: Appendix 2 Homework Problems",
+     "line": 267
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "modules/17-moment-integrals.md"
+  },
+  {
+   "title": "Mechanics Map（理论力学系统参考）",
+   "lines": 81,
+   "sections": [
+    {
+     "level": 1,
+     "title": "Mechanics Map（理论力学系统参考）",
+     "line": 6
+    },
+    {
+     "level": 2,
+     "title": "什么时候用这个 skill",
+     "line": 16
+    },
+    {
+     "level": 2,
+     "title": "章节索引",
+     "line": 30
+    },
+    {
+     "level": 2,
+     "title": "用法",
+     "line": 54
+    },
+    {
+     "level": 2,
+     "title": "与其它工具的分工",
+     "line": 64
+    },
+    {
+     "level": 2,
+     "title": "说明",
+     "line": 77
+    }
+   ],
+   "skill": "mechanics-map",
+   "file": "SKILL.md"
+  }
+ ]
+}

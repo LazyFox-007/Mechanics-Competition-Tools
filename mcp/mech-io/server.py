@@ -31,6 +31,7 @@ import hashlib
 import json
 import os
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -237,6 +238,24 @@ TOOLS = [
                 "problem": {"type": "string", "description": "默认“命题式赛题1”"},
             },
             "required": ["action", "root"],
+        },
+    },
+    {
+        "name": "kb_search",
+        "description": (
+            "在技能库（mechanics-map / mechanics-zh）里检索关键词，返回「文件 + 行号 + 所在小节标题 + 命中行」。"
+            "先查索引定位，再只读那几十行——比整本读进上下文省得多。纯本地，不联网。"
+        ),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "description": "关键词，空格分隔多个词"},
+                "roots": {"type": "array", "items": {"type": "string"},
+                          "description": "相对仓库根或绝对路径的目录列表，默认 mechanics-map + mechanics-zh"},
+                "mode": {"type": "string", "enum": ["and", "or"], "description": "多词关系，默认 and"},
+                "limit": {"type": "number", "description": "返回文件数上限，默认 8"},
+            },
+            "required": ["query"],
         },
     },
 ]
@@ -789,6 +808,87 @@ def t_submission_pack(args):
     return {"ok": False, "error": f"未知 action: {action}"}
 
 
+_INDEX_CACHE = {}
+
+
+def _load_index(skill_dir):
+    """读 skills/<skill>/index.json（build_index.py 生成），没有就返回 None。"""
+    if skill_dir in _INDEX_CACHE:
+        return _INDEX_CACHE[skill_dir]
+    p = os.path.join(skill_dir, "index.json")
+    data = None
+    if os.path.isfile(p):
+        try:
+            with open(p, encoding="utf-8") as f:
+                data = json.load(f)
+        except Exception:  # noqa: BLE001
+            data = None
+    _INDEX_CACHE[skill_dir] = data
+    return data
+
+
+def _section_for(index, relfile, line):
+    """命中行落在哪一节：取该行之前最近的标题。"""
+    if not index:
+        return None
+    for src in index.get("sources") or []:
+        if src.get("file") != relfile:
+            continue
+        cur = None
+        for s in src.get("sections") or []:
+            if s.get("line", 0) <= line:
+                cur = s
+            else:
+                break
+        return (cur or {}).get("title") or src.get("title")
+    return None
+
+
+def t_kb_search(args):
+    query = (args.get("query") or "").strip()
+    if not query:
+        return {"ok": False, "error": "query 不能为空"}
+    repo = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    roots = args.get("roots") or ["skills/mechanics-map", "skills/mechanics-zh"]
+    limit = int(args.get("limit") or 8)
+    mode = (args.get("mode") or "and").lower()
+    terms = [t for t in re.split(r"\s+", query.lower()) if t]
+
+    results = []
+    for root in roots:
+        base = root if os.path.isabs(root) else os.path.join(repo, root)
+        if not os.path.isdir(base):
+            continue
+        index = _load_index(base)
+        skill = os.path.basename(os.path.normpath(base))
+        for dirpath, _, files in os.walk(base):
+            for fn in sorted(files):
+                if not fn.endswith(".md"):
+                    continue
+                fp = os.path.join(dirpath, fn)
+                rel = os.path.relpath(fp, base).replace("\\", "/")
+                try:
+                    with open(fp, encoding="utf-8", errors="replace") as f:
+                        lines = f.read().splitlines()
+                except Exception:  # noqa: BLE001
+                    continue
+                hits = []
+                for i, ln in enumerate(lines, start=1):
+                    low = ln.lower()
+                    hit = all(t in low for t in terms) if mode == "and" else any(t in low for t in terms)
+                    if hit and ln.strip():
+                        hits.append({"line": i, "text": ln.strip()[:160],
+                                     "section": _section_for(index, rel, i)})
+                if hits:
+                    results.append({"skill": skill, "file": rel, "hits": len(hits),
+                                    "chapter": (index or {}).get("skill"),
+                                    "top": hits[:3]})
+    results.sort(key=lambda r: -r["hits"])
+    return {"ok": True, "query": query, "mode": mode,
+            "files_matched": len(results), "roots": roots,
+            "results": results[:limit]}
+
+
 HANDLERS = {
     "io_info": t_io_info,
     "py_run": t_py_run,
@@ -800,6 +900,7 @@ HANDLERS = {
     "numeric_compare": t_numeric_compare,
     "html_to_pdf": t_html_to_pdf,
     "submission_pack": t_submission_pack,
+    "kb_search": t_kb_search,
 }
 
 

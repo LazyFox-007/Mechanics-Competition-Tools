@@ -198,19 +198,43 @@ if (-not $py) {
     }
 }
 
-# ---------- 收尾清单 ----------
-Write-Host ''
-Write-Host '================ 还差这些（脚本管不了）================' -ForegroundColor Cyan
-Write-Host @"
-  1) 插件 mech-workbench（9 个工具，需创造模式）
+# ---------- 插件安装检查 ----------
+# 插件是 Host-only bundle，脚本装不了；但「装没装」必须能查出来，
+# 否则最容易出现的情况是：以为装好了，赛时发现 9 个工具根本不存在。
+$pluginName = 'dsh-mech-workbench'
+$pluginWhere = $null
+foreach ($p in @(
+        (Join-Path $DshHome "profiles\node_modules\$pluginName"),
+        (Join-Path $DshHome "plugins\$pluginName"))) {
+    if (Test-Path $p) { $pluginWhere = $p; break }
+}
+if (-not $pluginWhere -and (Test-Path $Cordis)) {
+    $cfgText = Get-Content $Cordis -Raw -Encoding UTF8
+    if ($cfgText -match [regex]::Escape($pluginName)) { $pluginWhere = 'cordis.patch.yml 里已登记' }
+}
+if ($pluginWhere) {
+    Ok "插件 $pluginName 已安装：$pluginWhere"
+    $pluginStatus = "  1) [已装] 插件 $pluginName —— $pluginWhere`n       重启 DSH 后可用 9 个工具"
+} else {
+    Warn "插件 $pluginName 未安装（9 个工具目前不可用）"
+    $pluginStatus = @"
+  1) [未装] 插件 $pluginName（9 个工具，需创造模式）
        设置 → Agent 预设 → 创造入口（cordis 预设）→ 新开会话
        plugin_manager → action: install_bundle
                     → target: $RepoRoot\plugins\dsh-mech-workbench
+       装完重启 DSH。没装也能解题，但读题图/内力图/出图自检要退回 mech-io + sympy 手推。
+"@
+}
 
+# ---------- 收尾清单 ----------
+Write-Host ''
+Write-Host '================ 还差这些（脚本管不了）================' -ForegroundColor Cyan
+Write-Host $pluginStatus
+Write-Host @"
   2) 赛前关掉联网 MCP（违规项）
        在 $Cordis 里给 browser / context7 加 disabled: true
 
-  3) 读题/交付的边界工具（mech-io，10 个）
+  3) 边界工具 mech-io（11 个）
        已随本脚本注册。自检：
        python $RepoRoot\mcp\mech-io\test\selftest.py
 
