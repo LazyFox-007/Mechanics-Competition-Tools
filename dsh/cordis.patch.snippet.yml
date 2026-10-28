@@ -1,0 +1,35 @@
+# 力学竞赛工具 —— 手动注册模板
+#
+# 正常情况下不用手抄：跑 `pwsh -File setup.ps1` 会按本机实际路径自动生成并写入
+# ~/.dsh/cordis.patch.yml。本文件只是给「脚本跑不通、需要手动改」时对照用。
+#
+# 替换两个占位符：
+#   <PYTHON>  装着 sympy + mcp 的解释器绝对路径（例：D:\anaconda\python.exe）
+#   <REPO>    本仓库根目录，**用正斜杠**（例：D:/math/mechnicsCOMP/mechanics-competition-tools）
+#
+# 注意：YAML 单引号内的反斜杠是字面量，不要写成双反斜杠，否则路径会失效。
+
+- insert:
+    - id: mech-sympy
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: sympy
+        transport: stdio
+        command: '<PYTHON>'
+        args:
+          - '<REPO>/mcp/sympy/server.py'
+
+- insert:
+    - id: mech-lean4
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: lean4
+        transport: stdio
+        command: '<PYTHON>'
+        args:
+          - '<REPO>/mcp/lean4/server.py'
+
+# ---- 赛前务必关掉的联网服务（赛规禁止联网检索）----
+# 如果 ~/.dsh/cordis.patch.yml 里有下面这些，给对应条目加 `disabled: true`：
+#   browser      （Playwright 浏览器自动化）
+#   context7     （在线拉文档）

@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# 插件随包的 vendored 依赖（靠 requirements.txt 还原）
+plugins/**/.pylibs/
+
+# 运行时产物
+out/
+output/
+*.log
+*.tmp
+*.mp4
+*.wav
+
+# 测试输出
+plugins/**/test/cases/out/
+
+# 本机配置
+.env
+config.local.*

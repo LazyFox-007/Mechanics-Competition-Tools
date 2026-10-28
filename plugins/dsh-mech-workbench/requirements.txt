@@ -1,0 +1,19 @@
+# dsh-mech-workbench 的符号计算依赖
+#
+# 上游仓库把 sympy + mpmath 打包在 .pylibs/ 里随包分发（27 MB / 1668 个文件）。
+# 本仓库只收源码，没有收录那份 vendored 副本，任选一种方式补上：
+#
+#   1) 直接用已装 sympy 的解释器（推荐）
+#        setx DSH_MECH_PYTHON "D:\anaconda\python.exe"
+#
+#   2) 装进目标解释器
+#        <python> -m pip install sympy==1.14.0 mpmath==1.4.1
+#
+#   3) 复原上游的随包副本
+#        <python> -m pip install --target .pylibs sympy==1.14.0 mpmath==1.4.1
+#
+# 缺 sympy 时插件不会崩：solve_math 会降级成数值路径，并在返回值 warnings 里如实声明。
+# 想主动验证降级路径：设 SYMBOLIC_NO_SYMPY=1
+
+sympy==1.14.0
+mpmath==1.4.1
