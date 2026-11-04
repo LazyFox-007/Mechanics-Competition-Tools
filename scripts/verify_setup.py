@@ -120,12 +120,26 @@ def check_env():
                 break
     rows.append({"item": "插件 dsh-mech-workbench", "ok": bool(plug), "where": plug or "未装"})
 
-    for mod in ("sympy", "numpy", "matplotlib", "PIL", "fitz"):
+    for mod in ("sympy", "numpy", "matplotlib", "PIL", "fitz", "Pynite"):
         try:
-            __import__(mod)
-            rows.append({"item": f"依赖 {mod}", "ok": True, "where": "import ok"})
+            m = __import__(mod)
+            ver = getattr(m, "__version__", "")
+            rows.append({"item": f"依赖 {mod}", "ok": True,
+                         "where": f"import ok {ver}".strip()})
         except Exception:  # noqa: BLE001
             rows.append({"item": f"依赖 {mod}", "ok": False, "where": "缺"})
+
+    # 冲突自检：PyNite 声明 numpy>=2.4，但 matplotlib<3.10 编译于 numpy 1.x，
+    # numpy 2 会让 matplotlib 直接 ImportError。这里显式比对两者能否共存。
+    try:
+        import numpy
+        import matplotlib  # noqa: F401
+        major = int(str(numpy.__version__).split(".")[0])
+        ok = major == 1
+        rows.append({"item": "冲突 numpy(1.x)+matplotlib", "ok": ok,
+                     "where": f"numpy {numpy.__version__}" + ("" if ok else " → 需回锁 1.26.4")})
+    except Exception as e:  # noqa: BLE001
+        rows.append({"item": "冲突 numpy(1.x)+matplotlib", "ok": False, "where": str(e)[:60]})
     return rows
 
 

@@ -118,7 +118,22 @@ if ($InstallDeps) {
     if (-not $py) { Bad '没找到 Python'; exit 1 }
     Write-Host "`n=== 安装 Python 依赖（$py）===" -ForegroundColor Cyan
     & $py -m pip install --disable-pip-version-check -q sympy mcp pyyaml pillow pymupdf numpy matplotlib
-    if ($LASTEXITCODE -eq 0) { Ok '依赖安装完成' } else { Warn 'pip 返回非 0，检查上面的输出' }
+    if ($LASTEXITCODE -eq 0) { Ok '基础依赖安装完成' } else { Warn 'pip 返回非 0，检查上面的输出' }
+
+    # --- PyNite（3D 刚架/桁架，MIT，离线 wheel） ---
+    # 冲突预警：PyNiteFEA 声明 numpy>=2.4，但本机 matplotlib 3.9 编译于 numpy 1.x，
+    # 升到 numpy 2 会 ImportError（matplotlib._path）。实测 PyNite 3.2.1 在 numpy 1.26 下工作正常，
+    # 因此用 --no-deps 装 wheel，并把 numpy/scipy 回锁到已知兼容版本。
+    $wheelDir = Join-Path $RepoRoot 'vendor\wheels'
+    $whl = Get-ChildItem $wheelDir -Filter 'pynitefea*.whl' -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($whl) {
+        & $py -m pip install --disable-pip-version-check -q --no-deps $whl.FullName
+        & $py -m pip install --disable-pip-version-check -q "numpy==1.26.4" "scipy==1.11.4"
+        $probe = & $py -c "from Pynite import FEModel3D; import numpy; print(numpy.__version__)" 2>$null
+        if ($LASTEXITCODE -eq 0) { Ok "PyNite 已装（离线 wheel，numpy 回锁 $probe）" }
+        else { Warn 'PyNite 导入失败：检查 numpy 是否被升到 2.x（见 docs/工具映射.md）' }
+    } else { Warn 'vendor\wheels 下没有 PyNiteFEA*.whl，跳过' }
+
     exit $LASTEXITCODE
 }
 
