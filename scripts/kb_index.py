@@ -105,6 +105,13 @@ def search(kb: Path, query: str, top: int = 5):
         # 打分：命中词数 * 100 + 出现次数；短块略加权
         cnt = sum(low.count(t.lower()) for t in hit)
         score = len(hit) * 100 + min(cnt, 50) + 300 / max(len(text), 1) * 10
+        # 来源权重：判据卡/清单 > 自检 > 教材 > 外部手册(PDF)
+        fn = rec["file"]; w = 1.0
+        if "04-题型判据卡" in fn or "03-提高题建模清单" in fn: w = 2.2
+        elif "02-解题后自检" in fn or "01-速查" in fn: w = 1.8
+        elif "mechanics-map" in fn: w = 1.4
+        elif fn.lower().endswith(".pdf"): w = 0.5
+        score *= w
         scored.append((score, rec, hit))
     scored.sort(key=lambda x: -x[0])
     if not scored:
