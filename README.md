@@ -36,6 +36,26 @@ pwsh -File setup.ps1 -Competition
 
 ---
 
+## 解题后自检（**强制**）
+
+> 2026-11 用第十四届（120 分）实测：6 题手推作答只得约 30 分。
+> 四个错误里**三个是「把工具跑一遍就能当场抓出来」的**，但一个都没跑。
+> 完整版与实测反例：[docs/解题自检流程.md](docs/解题自检流程.md)
+
+交卷前必须逐条打勾：
+
+| # | 规则 | 触发条件 | 动作 |
+|---|---|---|---|
+| 1 | **截面积分过整体量** | 对截面/体积积分求合力 | 验 $\int\tau\mathrm dA=F_S$、$\int\sigma\mathrm dA=N$、$\int y\sigma\mathrm dA=M$ |
+| 2 | **分段刚度建有限元** | EI/EA 沿杆长变化 | **禁止手算积分**，建 3–4 个梁单元 |
+| 3 | **二力杆先跑 `truss_solve`** | 二力杆、桁架、杆系 | 先看内力**比**，再谈临界力与配比 |
+
+工具救不了的部分（建模漏项、符号反）只能用能量法 / 极限情形 / 量纲 / 对称性交叉验证。
+
+**一句话**：能算 ≠ 算对。每个答案都要有一条**不依赖同一套推导**的路径去核对。
+
+---
+
 ## 仓库里有什么
 
 | 目录 | 内容 | 干什么用 |
@@ -51,7 +71,7 @@ pwsh -File setup.ps1 -Competition
 | **`mcp/mech-io/`** | **自建（11 工具）** | **竞赛现场的边界工具**：`py_run` 跑 Python（绕开 shell 引号与 GBK）、`img_crop`/`pdf_page_crop` 取局部高清、`fig_lint`/`plot_audit` 图形自检、`scan_extremum`/`numeric_compare` 独立校核、`kb_search` 查教材索引、`html_to_pdf`、`submission_pack` |
 | **`mcp/mech-solver/`** | **自建（5 工具）** | **补齐空白分支**：`energy_method`（卡氏/单位载荷）、`truss_solve`（桁架，含逐节点平衡校验）、`rigid_planar`（刚体平面运动/瞬心）、`buckling_solve`（压杆稳定） |
 | `mcp/lean4/` | lean-mcp 单文件 | Lean 4 形式化：类型检查、运行、query |
-| `docs/` | 赛规摘要、工具映射 | 赛前对表用 |
+| `docs/` | 赛规摘要、工具映射、**解题自检流程** | 赛前对表 + 交卷前打勾 |
 
 **总大小约 5.0 MB** —— 远低于赛规 200 MB 的知识库上限。
 
