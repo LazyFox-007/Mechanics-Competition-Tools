@@ -71,7 +71,12 @@ if ([string]::IsNullOrWhiteSpace($PSScriptRoot)) {
     $scriptDir = $PSScriptRoot
 }
 $RepoRoot = $scriptDir
-if ([string]::IsNullOrWhiteSpace($DshHome)) { $DshHome = Join-Path $env:USERPROFILE '.dsh' }
+if ([string]::IsNullOrWhiteSpace($DshHome)) {
+    # 赛规：工具与知识库须在 D 盘。优先级：显式 -DshHome > 环境变量 DSH_HOME > D:\dsh（若已存在）> 用户目录（兜底，会报警）
+    if ($env:DSH_HOME) { $DshHome = $env:DSH_HOME }
+    elseif (Test-Path 'D:\dsh') { $DshHome = 'D:\dsh' }
+    else { $DshHome = Join-Path $env:USERPROFILE '.dsh' }
+}
 $Cordis = Join-Path $DshHome 'cordis.patch.yml'
 
 # ---------- 工具函数：找一个能用 pyyaml 的解释器 ----------
