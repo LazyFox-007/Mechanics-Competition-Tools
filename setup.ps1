@@ -16,9 +16,15 @@
 .PARAMETER DryRun
     只打印将要做什么，不落盘
 .PARAMETER Competition
-    竞赛模式：只保留 document / sympy / sympy-physics / mech-io / mech-solver，
-    其余 MCP（browser/context7/everything/video/image/tools/eac/rea/…）全部 disabled。
-    既满足“赛时不得联网”的合规要求，也省 token（同分看 token）。
+    竞赛模式：保留 document / sympy / sympy-physics / mech-io / mech-solver，
+    外加本地文件检索 everything（不联网、体积小，且 ~/.dsh/AGENTS.md 的路由表依赖它）。
+    其余 MCP（video/image/tools/eac/rea/…）disabled，省 token（同分看 token）。
+    browser / context7 属赛规禁止的联网工具，无论 -KeepMCP 传什么都强制关闭。
+.PARAMETER KeepMCP
+    在默认保留清单之外额外保留的 MCP 服务名（逗号分隔）。
+    例：-KeepMCP image,video。不能用于保留联网工具（会被拒绝）。
+.PARAMETER NoEverything
+    连 everything 一起关掉，走“最省 token”档；代价是路由表第一行（找文件）失效。
 .PARAMETER Verify
     重启 DSH 之后跑：真的把每个 MCP 拉起来，走 initialize + tools/list，
     报工具数与耗时；再查技能、插件、依赖。不写任何配置。
@@ -39,6 +45,8 @@ param(
     [string]$PythonExe = '',
     [switch]$DryRun,
     [switch]$Competition,
+    [string[]]$KeepMCP = @(),
+    [switch]$NoEverything,
     [switch]$Verify,
     [switch]$Restore,
     [string]$BackupPath = '',
@@ -281,16 +289,66 @@ if (-not $py) {
 }
 
 # ---------- 竞赛模式：只留必需 MCP ----------
+# 保留清单是**唯一真相源**：-DryRun 的提示与实际执行都从它派生。
+# 以前这里有两份独立的硬编码清单（提示一份、调用一份），已经漂移过一次
+# （DryRun 说 4 个、实际调 5 个），新增 MCP 时还会被静默关掉——现在改这里一处即可。
+
+$CompetitionKeep = @(
+    'document'        # 读赛题 PDF
+    'sympy'           # 符号推导
+    'sympy-physics'   # 单位/量纲/运动学/梁
+    'mech-io'         # 跑脚本 / 裁图 / 图检 / 打包
+    'mech-solver'     # 桁架 / 刚体平面运动 / 压杆稳定 / 能量法
+)
+$CompetitionKeepLocal = @(
+    'everything'      # 本地文件检索，不联网、4 个工具，路由表第一行依赖它
+)
+# 赛规明令禁止的联网工具：即便用户用 -KeepMCP 点名，也必须拒
+$CompetitionForbid = @('browser', 'context7')
+
 if ($Competition) {
     $py = Get-ToolPython
     if (-not $py) {
         Warn '竞赛模式需要 pyyaml，已跳过（用 -PythonExe 指定解释器）'
-    } elseif ($DryRun) {
-        Info '  [DryRun] 将只保留 document / sympy / sympy-physics / mech-io / mech-solver'
-        Info '  [DryRun] 其余一律 disabled（browser/context7 属赛规禁止的联网工具）'
     } else {
-        Step '5/5 竞赛模式：关掉无关 MCP（合规 + 省 token）'
-        & $py (Join-Path $RepoRoot 'scripts\mcp_switch.py') '--only' 'document,sympy,sympy-physics,mech-io,mech-solver'
+        $keep = @($CompetitionKeep)
+        if (-not $NoEverything) { $keep += $CompetitionKeepLocal }
+        if ($KeepMCP) { $keep += $KeepMCP }
+        $keep = @($keep | Where-Object { $_ -and $_.Trim() } | ForEach-Object { $_.Trim() } | Select-Object -Unique)
+
+        $violated = @($keep | Where-Object { $CompetitionForbid -contains $_ })
+        if ($violated.Count -gt 0) {
+            Bad ('拒绝：这些是赛规禁止的联网工具，不能保留 —— ' + ($violated -join ', '))
+            Info '  （-KeepMCP 只用于本地工具；browser/context7 在竞赛模式下恒定关闭）'
+            exit 1
+        }
+
+        # 把「会关掉谁」逐条列出来，不让它静默发生
+        $cfgPath = Join-Path $DshHome 'cordis.patch.yml'
+        $allServers = @()
+        if (Test-Path $cfgPath) {
+            $allServers = @(Select-String -Path $cfgPath -Pattern 'serverName:\s*(\S+)\s*$' |
+                Where-Object { $_.Line -notmatch '^\s*#' } |
+                ForEach-Object { $_.Matches[0].Groups[1].Value } | Select-Object -Unique)
+        }
+        $willOff = @($allServers | Where-Object { $keep -notcontains $_ })
+        $unknown = @($KeepMCP | Where-Object { $_ -and ($allServers -notcontains $_) })
+
+        if ($unknown.Count -gt 0) {
+            Warn ('-KeepMCP 里有配置中不存在的服务名：' + ($unknown -join ', '))
+        }
+
+        if ($DryRun) {
+            Info ('  [DryRun] 保留 ' + $keep.Count + ' 个：' + ($keep -join ', '))
+            Info ('  [DryRun] 置为 disabled ' + $willOff.Count + ' 个（含此前已关）：' + ($willOff -join ', '))
+            Info '  [DryRun] browser / context7 为赛规禁止的联网工具，强制关闭，不可用 -KeepMCP 覆盖'
+            if ($NoEverything) { Warn '  [DryRun] 已指定 -NoEverything：everything 也会被关，路由表第一行将失效' }
+        } else {
+            Step '5/5 竞赛模式：关掉无关 MCP（合规 + 省 token）'
+            Ok ('  保留 ' + $keep.Count + ' 个：' + ($keep -join ', '))
+            if ($willOff.Count -gt 0) { Warn ('  置为 disabled ' + $willOff.Count + ' 个（含此前已关）：' + ($willOff -join ', ')) }
+            & $py (Join-Path $RepoRoot 'scripts\mcp_switch.py') '--only' ($keep -join ',')
+        }
     }
 }
 
@@ -336,8 +394,11 @@ Write-Host $pluginStatus
 Write-Host @"
   2) 赛前切竞赛模式（合规 + 省 token）
        pwsh -File setup.ps1 -Competition
-       只保留 document / sympy / sympy-physics / mech-io / mech-solver，
-       其余（browser/context7/everything/video/image/tools/eac/rea）自动 disabled
+       保留 document / sympy / sympy-physics / mech-io / mech-solver + everything（本地检索）
+       其余（video/image/tools/eac/rea…）自动 disabled；
+       browser / context7 属联网工具，强制关闭且不可用 -KeepMCP 覆盖
+       想多留几个本地工具：-KeepMCP image,video
+       最省 token（连 everything 也关）：-NoEverything
        恢复：pwsh -File setup.ps1 -Restore
 
   3) 边界工具 mech-io（11 个）
