@@ -94,6 +94,10 @@ pwsh -File setup.ps1 -Competition
 
 赛规里有几条**直接决定成绩有效性**：
 
+0. **工具与知识库必须装在 D 盘** —— 这是环境核验的硬要求。`setup.ps1` 会在 `Step 1/4` 检查
+   仓库 / `DSH_HOME` / Python 三条路径，凡在 `C:` 的都会红字报警；迁移方法见
+   [docs/赛前必读-D盘要求.md](docs/赛前必读-D盘要求.md)。
+
 1. **关掉所有联网 MCP** —— `browser`、`context7` 在赛时属于「联网检索」，违规。
    在 `~/.dsh/cordis.patch.yml` 给它们加 `disabled: true`。
 2. **确认知识库 ≤ 200 MB** —— 以解压后含索引、配置、元数据的总量计。

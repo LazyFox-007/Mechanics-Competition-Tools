@@ -140,6 +140,24 @@ if ($InstallDeps) {
 Step '1/4 环境确认'
 Info "仓库    : $RepoRoot"
 Info "DSH_HOME: $DshHome"
+
+# ---------- 赛规硬要求：工具与知识库必须装在 D 盘 ----------
+$pathsOnC = @()
+if ($DshHome -match '^[Cc]:') { $pathsOnC += "DSH_HOME = $DshHome" }
+if ($RepoRoot -match '^[Cc]:') { $pathsOnC += "仓库     = $RepoRoot" }
+$pyPath = $PythonExe; if (-not $pyPath) { $pyPath = (Get-Command python -ErrorAction SilentlyContinue).Source }
+if ($pyPath -and ($pyPath -match '^[Cc]:')) { $pathsOnC += "Python   = $pyPath" }
+if ($pathsOnC.Count -gt 0) {
+    Write-Host ""
+    Bad '========== 赛规不合规：以下路径在 C 盘 =========='
+    $pathsOnC | ForEach-Object { Warn "  $_" }
+    Warn '赛规要求：解题工具与知识库必须安装在 D 盘。请迁移后重跑本脚本。'
+    Warn '迁移方法见 docs/赛前必读-D盘要求.md'
+    Write-Host ""
+} else {
+    Ok 'D 盘要求：仓库 / DSH_HOME / Python 均在 D 盘'
+}
+
 if (-not (Test-Path (Join-Path $RepoRoot 'skills'))) { Bad '仓库结构不对，找不到 skills/'; exit 1 }
 if (-not (Test-Path $DshHome)) { Warn 'DSH_HOME 不存在，请确认 DSH 已装并至少启动过一次'; }
 
