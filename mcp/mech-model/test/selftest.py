@@ -141,6 +141,21 @@ t("浮体 判 block", r["verdict"] == "block")
 t("浮体 报出 BM 的 I 取错", any(v["code"] == "CONFLICT" and "水线面" in v["message"] for v in r["violations"]))
 
 # ────────────────────────── 6. 正确声明必须 pass ──────────────────────────
+print("\n=== 5b. 读图门禁（_common.conflicts，对所有题型生效）===")
+g = baseline("beam_strength")
+g["figure_transcribed"] = {"value": "只看过整页", "evidence": "derived"}
+r = chk("beam_strength", g)
+print("  只看过整页 -> verdict=%s err=%d" % (r["verdict"], r["n_error"]))
+for v in r["violations"]:
+    print("    [%s] %s" % (v["code"], v["message"][:70]))
+t("『只看过整页』判 block", r["verdict"] == "block")
+t("报出读图门禁", any(v["code"] == "CONFLICT" and "放大" in v["message"] for v in r["violations"]))
+g2 = baseline("beam_strength")
+g2["figure_transcribed"] = {"value": "凭印象", "evidence": "derived"}
+t("『凭印象』判 block", chk("beam_strength", g2)["verdict"] == "block")
+base_ok = chk("beam_strength", baseline("beam_strength"))
+t("『已逐项转写并放大确认』pass", base_ok["verdict"] == "pass", base_ok["violations"])
+
 print("\n=== 6. 正确声明必须 pass（不许误报）===")
 FIX = {
     # 卡片语义上要求覆盖默认值的地方

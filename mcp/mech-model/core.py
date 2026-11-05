@@ -167,8 +167,9 @@ def check(pid, decisions):
                        "note": d.get("note", "")}
         passed.append({"axis": aid, "value": val, "evidence": ev})
 
-    # 矛盾规则
-    for cf in card.get("conflicts", []):
+    # 矛盾规则：先查通用门禁（对所有题型都成立），再查该题型自己的
+    common_cf = (data.get("_common") or {}).get("conflicts") or []
+    for cf in list(common_cf) + list(card.get("conflicts", [])):
         when = cf.get("when", {})
         got = {}
         ok = True
