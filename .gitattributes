@@ -1,0 +1,7 @@
+# 行尾策略：只钉有功能后果的两类。
+#
+# .ps1 / .cmd 必须是 CRLF：本机 pwsh 实际是 Windows PowerShell 5.1，
+# 且脚本还要求 UTF-8 BOM（BOM 由 git 按字节保留，这里管不了；preflight.py 会查）。
+# 其他文本文件用默认行为即可，Python / JSON / Markdown 对行尾不敏感。
+*.ps1  text eol=crlf
+*.cmd  text eol=crlf

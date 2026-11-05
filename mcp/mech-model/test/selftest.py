@@ -4,6 +4,13 @@ import json
 import os
 import sys
 
+# 换环境时控制台可能是 GBK，中文输出会 UnicodeEncodeError
+for _s in (sys.stdout, sys.stderr):
+    try:
+        _s.reconfigure(encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))          # -> mcp/mech-model
 import core  # noqa: E402

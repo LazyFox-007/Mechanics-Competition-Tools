@@ -446,7 +446,7 @@ Write-Host $pluginStatus
 Write-Host @"
   2) 赛前切竞赛模式（合规 + 省 token）
        pwsh -File setup.ps1 -Competition
-       保留 document / sympy / sympy-physics / mech-io / mech-solver + everything（本地检索）
+       保留 document / sympy / sympy-physics / mech-io / mech-solver / mech-model + everything（本地检索）
        其余（video/image/tools/eac/rea…）自动 disabled；
        browser / context7 属联网工具，强制关闭且不可用 -KeepMCP 覆盖
        想多留几个本地工具：-KeepMCP image,video
@@ -457,6 +457,10 @@ Write-Host @"
        已随本脚本注册。自检：
        python $RepoRoot\mcp\mech-io\test\selftest.py
 
+  3b) 建模决策卡 mech-model（1 个）
+       已随本脚本注册。自检：
+       python $RepoRoot\mcp\mech-model\test\selftest.py
+
   4) 可选：读题工具（来自另一个仓库）
        ai-agent-tools 的 document MCP：pdf_text / pdf_render
        注：mech-io 的 pdf_page_crop 能直接取 PDF 局部，已覆盖大部分读题需求
@@ -464,6 +468,9 @@ Write-Host @"
   5) 重启 DSH 生效
 
   6) 自检：问一句「现在有哪些 MCP 工具」
+
+  7) 换机器前跑一遍预检（编码 / 语法 / JSON / 硬编码路径 / 真跑自检）
+       python $RepoRoot\scripts\preflight.py
 "@
 Write-Host '======================================================' -ForegroundColor Cyan
 if ($DryRun) { Write-Host "`n（DryRun：以上均未落盘）" -ForegroundColor Yellow }

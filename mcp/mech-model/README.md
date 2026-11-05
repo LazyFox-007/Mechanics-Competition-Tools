@@ -90,13 +90,24 @@
 
 ## 自检
 
+用仓库注册时的同一个解释器（`setup.ps1` 会告诉你路径）；不需要任何第三方依赖。
+
 ```powershell
 # 20 项逻辑自检（含第十四届第 6 题回归）
-D:\anaconda\python.exe mcp/mech-model/test/selftest.py
+python mcp/mech-model/test/selftest.py
 
 # MCP 协议握手（真起进程走 initialize/tools/list/tools/call）
-D:\anaconda\python.exe mcp/mech-model/test/handshake.py
+python mcp/mech-model/test/handshake.py
 ```
+
+换机器部署前，先跑一遍全仓预检：
+
+```powershell
+python scripts/preflight.py
+```
+
+它会检查 `.ps1` 的 BOM+CRLF、文本编码、Python 语法、JSON 可解析、绝对路径硬编码、
+`cards.json` schema，并真跑上面两个自检。
 
 ## 体积与 Token
 

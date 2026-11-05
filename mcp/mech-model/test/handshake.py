@@ -5,6 +5,13 @@ import os
 import subprocess
 import sys
 
+# 换环境时控制台可能是 GBK，中文输出会 UnicodeEncodeError
+for _s in (sys.stdout, sys.stderr):
+    try:
+        _s.reconfigure(encoding="utf-8")
+    except Exception:  # noqa: BLE001
+        pass
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 SERVER = os.path.join(os.path.dirname(HERE), "server.py")
 PY = sys.executable
