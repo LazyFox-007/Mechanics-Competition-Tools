@@ -16,6 +16,10 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 SERVER = os.path.join(os.path.dirname(HERE), "server.py")
 PY = sys.executable
 
+# 期望的卡片数从 cards.json 读，避免加卡后这里写死的数字漂移
+with open(os.path.join(os.path.dirname(HERE), "cards.json"), encoding="utf-8") as _f:
+    N_EXPECT = len(json.load(_f)["cards"])
+
 reqs = [
     {"jsonrpc": "2.0", "id": 1, "method": "initialize",
      "params": {"protocolVersion": "2024-11-05",
@@ -56,8 +60,8 @@ for line in out.splitlines():
                   % (t["name"], len(t["description"]), list(t["inputSchema"].get("properties", {}).keys())))
     elif rid == 3:
         body = json.loads(res["content"][0]["text"])
-        print("  call index -> ok=%s, %d 张卡" % (body["ok"], len(body["cards"])))
-        ok["call"] = body["ok"] and len(body["cards"]) == 6
+        print("  call index -> ok=%s, %d 张卡（期望 %d）" % (body["ok"], len(body["cards"]), N_EXPECT))
+        ok["call"] = body["ok"] and len(body["cards"]) == N_EXPECT
     elif rid == 4:
         body = json.loads(res["content"][0]["text"])
         top = body["candidates"][0]["id"] if body.get("candidates") else None

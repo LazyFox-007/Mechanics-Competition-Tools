@@ -16,6 +16,7 @@
 """
 
 import io
+import glob
 import json
 import os
 import re
@@ -184,8 +185,60 @@ try:
     n_ax = sum(len(c["axes"]) for c in d["cards"].values())
     ok("%d 张卡 / %d 条题型轴 / %d 条通用轴"
        % (len(d["cards"]), n_ax, len(d["_common"]["axes"])))
+
+    # 防泄漏：卡里不许出现具体答案数值（赛规：严禁夹带赛题答案）
+    leak_re = re.compile(r"\d+\.\d{3,}")          # 三位以上小数，几乎必是某个答案
+    KNOWN = ["5.54", "48.05", "0.043", "166.2", "298.7", "36517", "82163",
+             "13584", "23528", "1.707", "2.165", "1.371", "12.775"]
+    leaks = []
+
+    def walk_json(node, path):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                walk_json(v, path + "." + str(k))
+        elif isinstance(node, list):
+            for i, v in enumerate(node):
+                walk_json(v, path + "[%d]" % i)
+        elif isinstance(node, str):
+            for m in leak_re.findall(node):
+                leaks.append("%s  %s" % (path, m))
+            for k in KNOWN:
+                if k in node:
+                    leaks.append("%s  %s" % (path, k))
+
+    walk_json(d["_common"], "_common")
+    for pid, c in d["cards"].items():
+        walk_json(c, pid)
+    if leaks:
+        for x in leaks:
+            bad("cards.json 疑似泄漏答案数值: " + x)
+    else:
+        ok("cards.json 无泄漏（无 3 位以上小数、无已知答案数值）")
 except Exception as e:  # noqa: BLE001
     bad("cards.json 校验失败: %s" % e)
+
+# ───────────────────────── 9. 可选插件 ─────────────────────────
+print("\n=== 9. 可选插件 dsh-mech-workbench（读图工具链）===")
+home = os.path.expanduser("~")
+_cfg_path = os.path.join(home, ".dsh", "cordis.patch.yml")
+cands = []
+for pat in ("plugins/*mech-workbench*", "plugins/*/*mech-workbench*"):
+    cands += glob.glob(os.path.join(home, ".dsh", pat))
+in_cfg = False
+if os.path.isfile(_cfg_path):
+    with io.open(_cfg_path, encoding="utf-8", errors="replace") as f:
+        in_cfg = "mech-workbench" in f.read()
+if cands or in_cfg:
+    ok("已装（%s）" % (cands[0] if cands else "cordis.patch.yml 里有条目"))
+else:
+    warn("未装 —— 9 个读图/出图工具不可用（mech_read_problem / mech_verify_reading / "
+         "mech_analyze 的静定判别 / mech_diagram …）")
+    print("        体积仅 1.2 MB，零视觉模型依赖。装法（脚本装不了，需创造模式）：")
+    print("          设置 → Agent 预设 → 创造入口（cordis 预设）→ 新开会话")
+    print("          plugin_manager → action: install_bundle")
+    print("                       → target: %s" % os.path.join(ROOT, "plugins", "dsh-mech-workbench"))
+    print("        注：second_reader 走云端 API（硅基流动/智谱/DeepSeek/商汤/Gemini），赛时须禁用；")
+    print("            其余工具纯 Pillow/numpy，完全离线。")
 
 # ───────────────────────── 8. 真跑自检 ─────────────────────────
 print("\n=== 8. 跑自检（这两个会起真进程）===")

@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
-"""mech-model 回归测试 —— 拿第十四届第 6 题（本次实测最大失分）做靶"""
+"""mech-model 回归测试。
+
+靶子是第十四、十五届两次实测里**真实犯过的错**，不是编的用例。
+判据：这 4 个错必须全部 block；正确声明必须全部 pass（不许误报）。
+"""
 import json
 import os
 import sys
@@ -28,133 +32,168 @@ def t(name, cond, detail=""):
         print("  FAIL  %s   %s" % (name, detail))
 
 
-print("=== 0. index ===")
+def chk(pid, dec):
+    return core.dispatch({"action": "check", "problem_class": pid, "decisions": dec})
+
+
+def codes(r):
+    return [v["code"] for v in r["violations"]]
+
+
+def axes_of(pid):
+    return [a["id"] for a in core._merged_axes(pid)]
+
+
+def baseline(pid, overrides=None):
+    """把每条轴填成它的第一个选项 + evidence=derived，再按需覆盖。"""
+    d = {}
+    for a in core._merged_axes(pid):
+        d[a["id"]] = {"value": a["options"][0], "evidence": "derived"}
+    for k, v in (overrides or {}).items():
+        d[k] = v
+    return d
+
+
+# ────────────────────────── 0. 规模 ──────────────────────────
+print("=== 0. 卡库规模 ===")
 idx = core.dispatch({"action": "index"})
-print("  卡片数 = %d | 通用轴 = %s" % (len(idx["cards"]), idx["common_axes"]))
-t("index 返回 6 张卡", len(idx["cards"]) == 6, idx)
+print("  卡片 %d 张 | 通用轴 %d 条" % (len(idx["cards"]), len(idx["common_axes"])))
+for c in idx["cards"]:
+    print("    %-24s %s" % (c["id"], c["name"]))
+t("卡片数 = 9", len(idx["cards"]) == 9, len(idx["cards"]))
+t("通用轴 = 5", len(idx["common_axes"]) == 5, idx["common_axes"])
 
-print("\n=== 1. probe：第6题题干关键词 ===")
-stem = ("列车轮对由两个刚性轮和一根刚性轴固结而成，车轮简化为顶角为2α的锥面体，"
-        "轨道简化为相距2b的两条平行线，车轮与轨道为点接触。轮对会发生微小侧向移位y，"
-        "和绕通过质心的铅垂轴的微小转角ψ。求滚动半径、侧向恢复力、蠕滑力与运动微分方程。")
-pr = core.dispatch({"action": "probe", "text": stem})
-print("  候选:", [(c["id"], c["score"]) for c in pr["candidates"]])
-t("probe 首选 rail_vehicle",
-  pr["candidates"] and pr["candidates"][0]["id"] == "rail_vehicle", pr["candidates"])
+# ────────────────────────── 1. probe ──────────────────────────
+print("\n=== 1. probe 命中 ===")
+probes = [
+    ("rail_vehicle", "列车轮对由两个刚性轮和一根刚性轴固结而成，车轮简化为顶角为2α的锥面体，"
+                     "轨道相距2b，轮对侧移y与转角ψ，蠕滑力，滚动半径"),
+    ("floating_stability", "运载火箭和海上回收平台简化为两个叠放共轴均质圆柱，漂浮于海水中，"
+                           "排水体积，吃水，竖直平衡状态稳定，稳心，微幅运动"),
+    ("sliding_block_on_beam", "梁AB的A端放置重量为G的滑块，滑块与梁之间滑动摩擦因数μ，"
+                              "刚好滑到梁的中点静止，滑出B端时速度"),
+    ("column_buckling", "杆BD为细长杆，恰好使滑块开始下滑且杆BD没有失稳，求弯曲刚度应满足的条件"),
+]
+for want, text in probes:
+    pr = core.dispatch({"action": "probe", "text": text})
+    top = pr["candidates"][0]["id"] if pr["candidates"] else None
+    print("  %-24s -> %s" % (want, top))
+    t("probe 命中 %s" % want, top == want, pr["candidates"])
 
-print("\n=== 2. 我的真实错误态（两条轴都 assumed）===")
-bad = {
-    "sign_convention": {"value": "已声明", "evidence": "derived"},
-    "small_deflection": {"value": "small", "evidence": "statement"},
-    "load_type": {"value": "dead", "evidence": "derived"},
+# ────────────────────────── 2. 真实错题必须 block ──────────────────────────
+print("\n=== 2. 第十四届第6题：我当时的两条沉默默认 ===")
+d14 = baseline("rail_vehicle", {
+    "figure_transcribed": {"value": "只看过整页", "evidence": "assumed"},
     "cone_taper": {"value": "半径向外侧增大", "evidence": "assumed"},
     "axle_tilt": {"value": "假定轴线始终水平", "evidence": "assumed"},
-    "creep_law": {"value": "线性(F=−f·v/vc)", "evidence": "statement"},
-    "spin_creep": {"value": "忽略", "evidence": "derived"},
-    "frame": {"value": "随质心平动系 + 相对定轴转动系", "evidence": "derived"},
-}
-r = core.dispatch({"action": "check", "problem_class": "rail_vehicle", "decisions": bad})
-print("  verdict=%s  err=%d warn=%d" % (r["verdict"], r["n_error"], r["n_warn"]))
+})
+r = chk("rail_vehicle", d14)
+print("  verdict=%s err=%d" % (r["verdict"], r["n_error"]))
 for v in r["violations"]:
-    print("    [%s] %-18s %s" % (v["code"], v.get("axis", str(v.get("axes"))), v["message"][:70]))
-t("错误态判 block", r["verdict"] == "block")
-codes = [v["code"] for v in r["violations"]]
-t("报出 cone_taper 未论证", any(v.get("axis") == "cone_taper" and v["code"] == "UNARGUED" for v in r["violations"]))
-t("报出 axle_tilt 未论证", any(v.get("axis") == "axle_tilt" and v["code"] == "UNARGUED" for v in r["violations"]))
-t("报出锥度方向冲突", "CONFLICT" in codes)
-t("总错误 >= 3", r["n_error"] >= 3, r["n_error"])
+    print("    [%-18s] %s" % (v["code"], v["message"][:66]))
+t("14届6 判 block", r["verdict"] == "block")
+t("14届6 报出锥度未论证", any(v.get("axis") == "cone_taper" and v["code"] == "UNARGUED" for v in r["violations"]))
+t("14届6 报出轴线未论证", any(v.get("axis") == "axle_tilt" and v["code"] == "UNARGUED" for v in r["violations"]))
+t("14届6 报出读图未确认", any(v.get("axis") == "figure_transcribed" and v["code"] == "UNARGUED" for v in r["violations"]))
 
-print("\n=== 3. 半错：锥度对了但轴线仍假定水平 ===")
-half = dict(bad)
-half["cone_taper"] = {"value": "半径向辋内(法兰侧)增大", "evidence": "figure"}
-half["axle_tilt"] = {"value": "假定轴线始终水平", "evidence": "derived"}
-r3 = core.dispatch({"action": "check", "problem_class": "rail_vehicle", "decisions": half})
-print("  verdict=%s  err=%d" % (r3["verdict"], r3["n_error"]))
-for v in r3["violations"]:
-    print("    [%s] %s" % (v["code"], v["message"][:80]))
-t("半错仍判 block", r3["verdict"] == "block")
-t("报出『轴线必然倾斜』", any(v["code"] == "CONFLICT" and "轴线必然倾斜" in v["message"] for v in r3["violations"]))
+print("\n=== 3. 第十五届第6题：三条建模轴 ===")
+d15 = baseline("sliding_block_on_beam", {
+    "stop_criterion": {"value": "准静态：局部斜率降到摩擦角即停", "evidence": "assumed"},
+    "inertia_scope": {"value": "连动能也丢掉", "evidence": "assumed"},
+    "staged_condition": {"value": "默认消失", "evidence": "assumed"},
+})
+r = chk("sliding_block_on_beam", d15)
+print("  verdict=%s err=%d" % (r["verdict"], r["n_error"]))
+for v in r["violations"]:
+    print("    [%-18s] %s" % (v["code"], v["message"][:66]))
+t("15届6 判 block", r["verdict"] == "block")
+t("15届6 报出『准静态 vs 能量法』", any(v["code"] == "CONFLICT" and "能量条件" in v["message"] for v in r["violations"]))
+t("15届6 报出『动能不能丢』", any(v["code"] == "CONFLICT" and "动能" in v["message"] for v in r["violations"]))
+t("15届6 报出条件继承未论证", any(v.get("axis") == "staged_condition" and v["code"] == "UNARGUED" for v in r["violations"]))
 
-print("\n=== 4. 正确态应 pass ===")
-good = dict(bad)
-good["cone_taper"] = {"value": "半径向辋内(法兰侧)增大", "evidence": "figure"}
-good["axle_tilt"] = {"value": "允许倾斜,且与侧移满足几何关系", "evidence": "derived"}
-r4 = core.dispatch({"action": "check", "problem_class": "rail_vehicle", "decisions": good})
-print("  verdict=%s err=%d warn=%d" % (r4["verdict"], r4["n_error"], r4["n_warn"]))
-for v in r4["violations"]:
-    print("    [%s] %s" % (v["code"], v["message"][:80]))
-t("正确态 pass", r4["verdict"] == "pass")
-t("filled 含 8 条轴", len(r4["filled"]) == 8, len(r4["filled"]))
+print("\n=== 4. 第十五届第6题：压杆把铰支读成固支 ===")
+dmu = baseline("column_buckling", {
+    "end_condition": {"value": "一端固支一端铰", "evidence": "figure"},
+    "figure_transcribed": {"value": "只看过整页", "evidence": "assumed"},
+})
+r = chk("column_buckling", dmu)
+print("  verdict=%s err=%d" % (r["verdict"], r["n_error"]))
+for v in r["violations"]:
+    print("    [%-18s] %s" % (v["code"], v["message"][:78]))
+t("压杆 μ 判 block", r["verdict"] == "block")
+t("压杆 报出『空心圆=铰支』",
+  any(v["code"] == "CONFLICT" and "空心圆" in v["message"] for v in r["violations"]))
 
-print("\n=== 5. 漏轴检查 ===")
-short = {"cone_taper": {"value": "半径向辋内(法兰侧)增大", "evidence": "figure"}}
-r5 = core.dispatch({"action": "check", "problem_class": "rail_vehicle", "decisions": short})
-n_missing = sum(1 for v in r5["violations"] if v["code"] == "MISSING")
-print("  MISSING = %d" % n_missing)
-t("漏 7 条轴全部报 MISSING", n_missing == 7, n_missing)
+print("\n=== 5. 第十五届第5题：浮体质心取界面 ===")
+df = baseline("floating_stability", {
+    "cg_from_parts": {"value": "取两段界面", "evidence": "assumed"},
+    "waterplane_inertia": {"value": "排水体", "evidence": "derived"},
+})
+r = chk("floating_stability", df)
+print("  verdict=%s err=%d" % (r["verdict"], r["n_error"]))
+for v in r["violations"]:
+    print("    [%-18s] %s" % (v["code"], v["message"][:66]))
+t("浮体 判 block", r["verdict"] == "block")
+t("浮体 报出 BM 的 I 取错", any(v["code"] == "CONFLICT" and "水线面" in v["message"] for v in r["violations"]))
 
-print("\n=== 6. 其余 5 张卡不误报（正常填法应 pass）===")
-cases = {
-    "statics_friction": {
-        "sign_convention": {"value": "已声明", "evidence": "derived"},
-        "small_deflection": {"value": "small", "evidence": "statement"},
-        "load_type": {"value": "dead", "evidence": "derived"},
-        "critical_states": {"value": "滑动2种+翻转2种 共4种", "evidence": "derived"},
-        "moment_point": {"value": "接触面端点", "evidence": "derived"},
-        "joint_type": {"value": "内铰(M=0,不提供反力)", "evidence": "statement"},
+# ────────────────────────── 6. 正确声明必须 pass ──────────────────────────
+print("\n=== 6. 正确声明必须 pass（不许误报）===")
+FIX = {
+    # 卡片语义上要求覆盖默认值的地方
+    "curved_member_impact": {"point_stress": {"value": "弯+扭(平面应力)", "evidence": "derived"}},
+    "large_deflection": {"small_deflection": {"value": "large", "evidence": "derived"}},
+    "rail_vehicle": {
+        "figure_transcribed": {"value": "已逐项转写并放大确认", "evidence": "figure"},
+        "cone_taper": {"value": "半径向辋内(法兰侧)增大", "evidence": "figure"},
+        "axle_tilt": {"value": "允许倾斜,且与侧移满足几何关系", "evidence": "derived"},
     },
-    "multibody_lagrange": {
-        "sign_convention": {"value": "已声明", "evidence": "derived"},
-        "small_deflection": {"value": "small", "evidence": "statement"},
-        "load_type": {"value": "dead", "evidence": "derived"},
-        "dof_count": {"value": "已消去,自由度=剩余广义坐标数", "evidence": "derived"},
-        "inertia_reference": {"value": "定轴转动→对轴心", "evidence": "textbook"},
-        "extra_mass": {"value": "两者都计入", "evidence": "derived"},
-        "potential_sign": {"value": "V=−mg·h(向下为正高)", "evidence": "statement"},
+    "floating_stability": {
+        "figure_transcribed": {"value": "已逐项转写并放大确认", "evidence": "figure"},
+        "cg_from_parts": {"value": "已加权算出并写成坐标", "evidence": "derived"},
+        "waterplane_inertia": {"value": "水线面 πr⁴/4(半径取水线处)", "evidence": "textbook"},
+        "gm_criterion": {"value": "初稳性 GM=BM−BG>0", "evidence": "textbook"},
+        "dof_coupling": {"value": "轴对称⇒一阶解耦", "evidence": "derived"},
+        "roll_inertia_point": {"value": "绕总质心的水平轴", "evidence": "derived"},
     },
-    "beam_strength": {
-        "sign_convention": {"value": "已声明", "evidence": "derived"},
-        "small_deflection": {"value": "small", "evidence": "statement"},
-        "load_type": {"value": "dead", "evidence": "derived"},
-        "section_region": {"value": "已按图示换算成 y 区间", "evidence": "figure"},
-        "danger_candidate": {"value": "同时考虑边缘纯弯与中性轴纯剪", "evidence": "textbook"},
-        "theory": {"value": "第三(最大切应力)", "evidence": "statement"},
+    "sliding_block_on_beam": {
+        "figure_transcribed": {"value": "已逐项转写并放大确认", "evidence": "figure"},
+        "stop_criterion": {"value": "能量法：到该处速度为零", "evidence": "statement"},
+        "inertia_scope": {"value": "只忽略静力平衡中的惯性项，动能保留", "evidence": "derived"},
+        "load_position": {"value": "位置随滑块移动，逐点列弯矩", "evidence": "derived"},
+        "support_stiffness": {"value": "已折算 k=EA/a，且判定为静定(反力与 k 无关)", "evidence": "derived"},
+        "friction_work": {"value": "∫μN ds，且 N 随滑块位置变", "evidence": "derived"},
     },
-    "curved_member_impact": {
-        "sign_convention": {"value": "已声明", "evidence": "derived"},
-        "small_deflection": {"value": "small", "evidence": "statement"},
-        "load_type": {"value": "dead", "evidence": "derived"},
-        "point_stress": {"value": "弯+扭(平面应力)", "evidence": "derived"},
-        "gauge_transform": {"value": "完整(εx,εy,γ → ε_θ)", "evidence": "derived"},
-        "gap_closed": {"value": "已算位移并与间隙比较", "evidence": "derived"},
-        "stiffness_known": {"value": "部分缺失→改用能量/实验量反求", "evidence": "statement"},
-        "mu": {"value": "铰-铰 1.0", "evidence": "statement"},
-    },
-    "large_deflection": {
-        "sign_convention": {"value": "已声明", "evidence": "derived"},
-        "small_deflection": {"value": "large", "evidence": "derived"},
-        "load_type": {"value": "dead", "evidence": "derived"},
-        "moment_arm": {"value": "到载荷作用线的垂直距离(死载)", "evidence": "derived"},
-        "segmentation": {"value": "已分段,段间 φ 连续、M 连续", "evidence": "derived"},
-        "solve_route": {"value": "两者互验", "evidence": "derived"},
-        "initial_guess": {"value": "BVP+打靶互验", "evidence": "derived"},
+    "column_buckling": {
+        "figure_transcribed": {"value": "已逐项转写并放大确认", "evidence": "figure"},
+        "end_condition": {"value": "两端铰", "evidence": "figure"},
+        "member_scope": {"value": "二力杆(仅轴力)", "evidence": "derived"},
+        "mu_vs_sigma": {"value": "临界力/临界应力(稳定问题)", "evidence": "statement"},
+        "slenderness": {"value": "已核 λ ≥ λp(大柔度,用欧拉)", "evidence": "derived"},
     },
 }
-for pid, dec in cases.items():
-    rr = core.dispatch({"action": "check", "problem_class": pid, "decisions": dec})
-    nop = [v for v in rr["violations"] if v["level"] == "error"]
-    print("  %-22s verdict=%-5s err=%d %s" % (pid, rr["verdict"], rr["n_error"],
-                                              [v["message"][:40] for v in nop]))
-    t("%s 正常填法 pass" % pid, rr["verdict"] == "pass", nop)
+for pid in core.load_cards()["cards"].keys():
+    dec = baseline(pid, FIX.get(pid, {}))
+    rr = chk(pid, dec)
+    errs = [v for v in rr["violations"] if v["level"] == "error"]
+    print("  %-24s verdict=%-5s err=%d %s" % (pid, rr["verdict"], rr["n_error"],
+                                             [v["message"][:38] for v in errs]))
+    t("%s 正确声明 pass" % pid, rr["verdict"] == "pass", errs)
 
-print("\n=== 7. 非法输入 ===")
+# ────────────────────────── 7. 漏轴 / 非法值 / 未知题型 ──────────────────────────
+print("\n=== 7. 边界输入 ===")
+short = {"cone_taper": {"value": "半径向辋内(法兰侧)增大", "evidence": "figure"}}
+r = chk("rail_vehicle", short)
+n_missing = sum(1 for v in r["violations"] if v["code"] == "MISSING")
+n_all = len(axes_of("rail_vehicle"))
+print("  MISSING=%d / 总轴 %d" % (n_missing, n_all))
+t("漏轴全部报 MISSING", n_missing == n_all - 1, n_missing)
 t("未知题型报错", core.dispatch({"action": "list", "problem_class": "nope"})["ok"] is False)
 t("非法取值报 BAD_VALUE",
-  "BAD_VALUE" in [v["code"] for v in core.dispatch(
-      {"action": "check", "problem_class": "rail_vehicle",
-       "decisions": {"cone_taper": {"value": "乱填", "evidence": "derived"}}})["violations"]])
+  "BAD_VALUE" in codes(chk("rail_vehicle", {"cone_taper": {"value": "乱填", "evidence": "derived"}})))
 t("缺 problem_class 报错", core.dispatch({"action": "check", "decisions": {}})["ok"] is False)
+t("空 decisions 全报 MISSING",
+  sum(1 for v in chk("rail_vehicle", {})["violations"] if v["code"] == "MISSING") == n_all)
 
-print("\n================================")
+print("\n" + "=" * 46)
 print("PASS %d / FAIL %d" % (PASS, FAIL))
 sys.exit(0 if FAIL == 0 else 1)

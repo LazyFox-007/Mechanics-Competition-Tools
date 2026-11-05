@@ -23,11 +23,17 @@ _cache = {}
 
 
 def load_cards(path=_CARDS_PATH):
-    if path in _cache:
-        return _cache[path]
+    """按 mtime 失效的缓存：改 cards.json 不必重启 MCP 进程。"""
+    try:
+        mtime = os.path.getmtime(path)
+    except OSError:
+        mtime = None
+    hit = _cache.get(path)
+    if hit is not None and hit[0] == mtime:
+        return hit[1]
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
-    _cache[path] = data
+    _cache[path] = (mtime, data)
     return data
 
 
