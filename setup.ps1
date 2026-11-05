@@ -286,6 +286,18 @@ if (-not $py) {
           - '$repoPosix/mcp/mech-solver/server.py'
 "@
 
+    $blkModel = @"
+- insert:
+    - id: mech-model
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: mech-model
+        transport: stdio
+        command: '$pyYaml'
+        args:
+          - '$repoPosix/mcp/mech-model/server.py'
+"@
+
     $existing = ''
     if (Test-Path $Cordis) { $existing = Get-Content $Cordis -Raw -Encoding UTF8 }
 
@@ -296,6 +308,7 @@ if (-not $py) {
         'sympy-physics' = $blkPhys
         'mech-io'       = $blkIo
         'mech-solver'   = $blkSolver
+        'mech-model'    = $blkModel
     }
     $missing = @()
     foreach ($name in $want.Keys) {
@@ -304,7 +317,7 @@ if (-not $py) {
     }
 
     if ($missing.Count -eq 0) {
-        Warn 'sympy / lean4 / sympy-physics / mech-io / mech-solver 都已在配置里，不重复添加'
+        Warn 'sympy / lean4 / sympy-physics / mech-io / mech-solver / mech-model 都已在配置里，不重复添加'
         Info '  想换成本仓库的副本，先删掉旧条目再跑一次'
     } elseif ($DryRun) {
         Info ('--- 将要追加: ' + ($missing -join ', ') + ' ---')
@@ -337,6 +350,7 @@ $CompetitionKeep = @(
     'sympy-physics'   # 单位/量纲/运动学/梁
     'mech-io'         # 跑脚本 / 裁图 / 图检 / 打包
     'mech-solver'     # 桁架 / 刚体平面运动 / 压杆稳定 / 能量法
+    'mech-model'      # 建模决策卡：建模轴显式声明与矛盾检查
 )
 $CompetitionKeepLocal = @(
     'everything'      # 本地文件检索，不联网、4 个工具，路由表第一行依赖它

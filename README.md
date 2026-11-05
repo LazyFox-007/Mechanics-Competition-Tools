@@ -49,8 +49,12 @@ pwsh -File setup.ps1 -Competition
 | 1 | **截面积分过整体量** | 对截面/体积积分求合力 | 验 $\int\tau\mathrm dA=F_S$、$\int\sigma\mathrm dA=N$、$\int y\sigma\mathrm dA=M$ |
 | 2 | **分段刚度建有限元** | EI/EA 沿杆长变化 | **禁止手算积分**，建 3–4 个梁单元 |
 | 3 | **二力杆先跑 `truss_solve`** | 二力杆、桁架、杆系 | 先看内力**比**，再谈临界力与配比 |
+| 4 | **建模轴先声明** | **动笔之前**（新增） | 跑 `model_card`；出现 `UNARGUED` / `CONFLICT` 就停，改完再算 |
 
 工具救不了的部分（建模漏项、符号反）只能用能量法 / 极限情形 / 量纲 / 对称性交叉验证。
+
+> 2026-11 用第十四届复盘：27 分失分里 **17 分来自「建模轴沉默默认」**（锥面锥度方向、轮对轴线能否倾斜），
+> 一个求解器都抓不到。规则 4 就是为这个加的，见 [docs/建模决策卡.md](docs/建模决策卡.md)。
 
 **一句话**：能算 ≠ 算对。每个答案都要有一条**不依赖同一套推导**的路径去核对。
 
@@ -70,6 +74,7 @@ pwsh -File setup.ps1 -Competition
 | **`mcp/sympy-physics/`** | **自建（7 工具）** | **`sympy.physics` 四模块封装**：拉格朗日方程、运动学求导、合成运动（含科氏）、梁（反力/内力/转角/挠度）、量纲检查、单位换算 |
 | **`mcp/mech-io/`** | **自建（11 工具）** | **竞赛现场的边界工具**：`py_run` 跑 Python（绕开 shell 引号与 GBK）、`img_crop`/`pdf_page_crop` 取局部高清、`fig_lint`/`plot_audit` 图形自检、`scan_extremum`/`numeric_compare` 独立校核、`kb_search` 查教材索引、`html_to_pdf`、`submission_pack` |
 | **`mcp/mech-solver/`** | **自建（5 工具）** | **补齐空白分支**：`energy_method`（卡氏/单位载荷）、`truss_solve`（桁架，含逐节点平衡校验）、`rigid_planar`（刚体平面运动/瞬心）、`buckling_solve`（压杆稳定） |
+| **`mcp/mech-model/`** | **自建（1 工具）** | **建模决策卡**：`model_card` 按题型列出「活决策轴」（选项 / 选错的后果链 / 判别试验），并检查你的建模声明——缺失、未论证（`evidence=assumed`）、互相矛盾。专治**建模轴沉默默认**，零依赖、描述仅 244 字符 |
 | `mcp/lean4/` | lean-mcp 单文件 | Lean 4 形式化：类型检查、运行、query |
 | `docs/` | 赛规摘要、工具映射、**解题自检流程** | 赛前对表 + 交卷前打勾 |
 
