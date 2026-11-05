@@ -119,7 +119,8 @@ def check_env():
             if os.path.isdir(cand):
                 plug = cand
                 break
-    rows.append({"item": "插件 dsh-mech-workbench", "ok": bool(plug), "where": plug or "未装"})
+    rows.append({"item": "插件 dsh-mech-workbench", "ok": True, "optional": True,
+                 "where": plug or "未装（可选；离线能力已由 mcp/mech-kit 覆盖）"})
 
     for mod in ("sympy", "numpy", "matplotlib", "PIL", "fitz", "Pynite"):
         try:
@@ -167,9 +168,17 @@ def main():
     if not a.json:
         print("\n  —— 环境 ——")
         for row in env:
-            print(f"  [{'OK' if row['ok'] else 'FAIL'}] {row['item']:26} {row['where']}")
+            if row.get("optional"):
+                tag = "SKIP" if "未装" in str(row["where"]) else "OK  "
+            else:
+                tag = "OK  " if row["ok"] else "FAIL"
+            print(f"  [{tag}] {row['item']:26} {row['where']}")
 
-    ok = all(r["ok"] for r in results) and all(row["ok"] for row in env if not row["item"].startswith("依赖 fitz"))
+    # 可选项（插件）不计入总体结论：它的离线能力已由 mcp/mech-kit 覆盖，
+    # 剩下的 second_reader / viz_check / render_math 走云端 API，赛规禁用。
+    ok = all(r["ok"] for r in results) and all(
+        row["ok"] for row in env
+        if not row["item"].startswith("依赖 fitz") and not row.get("optional"))
     if a.json:
         print(json.dumps({"servers": results, "env": env, "skipped": skipped,
                           "ok": ok}, ensure_ascii=False, indent=1))
