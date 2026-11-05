@@ -84,6 +84,15 @@ for want, text in probes:
     print("  %-24s -> %s" % (want, top))
     t("probe 命中 %s" % want, top == want, pr["candidates"])
 
+print("\n=== 1b. 低置信度必须出 warning ===")
+low = core.dispatch({"action": "probe",
+                     "text": "均质杆AD的A端铰接弧边三角形柱，中间支撑为半圆柱，二者在水平面上作纯滚动"})
+print("  top=%s 票=%d warning=%s"
+      % (low["candidates"][0]["id"] if low["candidates"] else "-",
+         low["candidates"][0]["score"] if low["candidates"] else 0,
+         (low.get("warning") or "(none)")[:56]))
+t("低票路由给出 warning", bool(low.get("warning")), low)
+
 # ────────────────────────── 2. 真实错题必须 block ──────────────────────────
 print("\n=== 2. 第十四届第6题：我当时的两条沉默默认 ===")
 d14 = baseline("rail_vehicle", {

@@ -81,8 +81,19 @@ def probe(text):
             scored.append({"id": pid, "name": c["name"], "hits": hits,
                            "score": len(hits)})
     scored.sort(key=lambda r: -r["score"])
+    warn = None
+    if scored:
+        top = scored[0]["score"]
+        if len(scored) > 1 and scored[1]["score"] == top:
+            tied = [r["id"] for r in scored if r["score"] == top]
+            warn = ("最高分 %d 项并列（各 %d 票）：%s。路由不可靠，必须人工判断，"
+                    "并考虑这题是否需要多张卡" % (len(tied), top, " / ".join(tied)))
+        elif top <= 1:
+            warn = ("最高分只有 %d 票：极可能是词表没覆盖该题的措辞。不要顺着头名往下走，"
+                    "先 index 扫一遍再人工选" % top)
     return {"ok": True, "action": "probe",
             "candidates": scored[:3],
+            "warning": warn,
             "note": "只是关键词匹配，最终选题型由人定"}
 
 
