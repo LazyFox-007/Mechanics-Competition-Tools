@@ -57,10 +57,14 @@ def baseline(pid, overrides=None):
 # ────────────────────────── 0. 规模 ──────────────────────────
 print("=== 0. 卡库规模 ===")
 idx = core.dispatch({"action": "index"})
-print("  卡片 %d 张 | 通用轴 %d 条" % (len(idx["cards"]), len(idx["common_axes"])))
+with open(os.path.join(os.path.dirname(HERE), "cards.json"), encoding="utf-8") as _f:
+    N_CARDS = len(json.load(_f)["cards"])
+print("  版本 %s | 卡片 %d 张 | 通用轴 %d 条"
+      % (idx["version"], len(idx["cards"]), len(idx["common_axes"])))
 for c in idx["cards"]:
     print("    %-24s %s" % (c["id"], c["name"]))
-t("卡片数 = 9", len(idx["cards"]) == 9, len(idx["cards"]))
+t("卡片数与 cards.json 一致", len(idx["cards"]) == N_CARDS, (len(idx["cards"]), N_CARDS))
+t("卡片数 >= 30（题型覆盖未退化）", N_CARDS >= 30, N_CARDS)
 t("通用轴 = 5", len(idx["common_axes"]) == 5, idx["common_axes"])
 
 # ────────────────────────── 1. probe ──────────────────────────
