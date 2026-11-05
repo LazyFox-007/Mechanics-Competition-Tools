@@ -93,6 +93,7 @@ pwsh -File setup.ps1 -Competition
 | **`mcp/mech-io/`** | **自建（11 工具）** | **竞赛现场的边界工具**：`py_run` 跑 Python（绕开 shell 引号与 GBK）、`img_crop`/`pdf_page_crop` 取局部高清、`fig_lint`/`plot_audit` 图形自检、`scan_extremum`/`numeric_compare` 独立校核、`kb_search` 查教材索引、`html_to_pdf`、`submission_pack` |
 | **`mcp/mech-solver/`** | **自建（5 工具）** | **补齐空白分支**：`energy_method`（卡氏/单位载荷）、`truss_solve`（桁架，含逐节点平衡校验）、`rigid_planar`（刚体平面运动/瞬心）、`buckling_solve`（压杆稳定） |
 | **`mcp/mech-model/`** | **自建（1 工具）** | **建模决策卡**：`model_card` 按题型列出「活决策轴」（选项 / 选错的后果链 / 判别试验），并检查你的建模声明——缺失、未论证（`evidence=assumed`）、互相矛盾。专治**建模轴沉默默认**，零依赖、描述仅 244 字符 |
+| **`mcp/mech-kit/`** | **自建（1 工具 / 5 op）** | **直接调 `plugins/dsh-mech-workbench/scripts/` 的 Python，绕过插件层**（不需要创造模式）：`preprocess` 17 种图像算子（zoom/probe/deskew/分栏）、`analyze` 静定反力+N/Q/M/T+**8 项独立校核**+**静定判别**、`diagram` 力学图、`annotate` 原图标注。零第三方依赖，全离线 |
 | `mcp/lean4/` | lean-mcp 单文件 | Lean 4 形式化：类型检查、运行、query |
 | `docs/` | 赛规摘要、工具映射、**解题自检流程** | 赛前对表 + 交卷前打勾 |
 

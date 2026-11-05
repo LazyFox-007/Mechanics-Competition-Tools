@@ -298,6 +298,18 @@ if (-not $py) {
           - '$repoPosix/mcp/mech-model/server.py'
 "@
 
+    $blkKit = @"
+- insert:
+    - id: mech-kit
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: mech-kit
+        transport: stdio
+        command: '$pyYaml'
+        args:
+          - '$repoPosix/mcp/mech-kit/server.py'
+"@
+
     $existing = ''
     if (Test-Path $Cordis) { $existing = Get-Content $Cordis -Raw -Encoding UTF8 }
 
@@ -309,6 +321,7 @@ if (-not $py) {
         'mech-io'       = $blkIo
         'mech-solver'   = $blkSolver
         'mech-model'    = $blkModel
+        'mech-kit'      = $blkKit
     }
     $missing = @()
     foreach ($name in $want.Keys) {
@@ -351,6 +364,7 @@ $CompetitionKeep = @(
     'mech-io'         # 跑脚本 / 裁图 / 图检 / 打包
     'mech-solver'     # 桁架 / 刚体平面运动 / 压杆稳定 / 能量法
     'mech-model'      # 建模决策卡：建模轴显式声明与矛盾检查
+    'mech-kit'        # 读图/C截面/内力图：直接调 dsh-mech-workbench 脚本，绕过插件层
 )
 $CompetitionKeepLocal = @(
     'everything'      # 本地文件检索，不联网、4 个工具，路由表第一行依赖它
@@ -446,7 +460,7 @@ Write-Host $pluginStatus
 Write-Host @"
   2) 赛前切竞赛模式（合规 + 省 token）
        pwsh -File setup.ps1 -Competition
-       保留 document / sympy / sympy-physics / mech-io / mech-solver / mech-model + everything（本地检索）
+       保留 document / sympy / sympy-physics / mech-io / mech-solver / mech-model / mech-kit + everything（本地检索）
        其余（video/image/tools/eac/rea…）自动 disabled；
        browser / context7 属联网工具，强制关闭且不可用 -KeepMCP 覆盖
        想多留几个本地工具：-KeepMCP image,video

@@ -227,34 +227,43 @@ for pat in ("plugins/*mech-workbench*", "plugins/*/*mech-workbench*"):
 in_cfg = False
 if os.path.isfile(_cfg_path):
     with io.open(_cfg_path, encoding="utf-8", errors="replace") as f:
-        in_cfg = "mech-workbench" in f.read()
+        for ln in f:
+            s = ln.strip()
+            if not s or s.startswith("#"):
+                continue          # 注释里提到不算已装（踩过：mech-kit 的注释含该字样导致误报）
+            if "mech-workbench" in s:
+                in_cfg = True
+                break
 if cands or in_cfg:
-    ok("已装（%s）" % (cands[0] if cands else "cordis.patch.yml 里有条目"))
+    ok("已装（%s）" % (cands[0] if cands else "cordis.patch.yml 里有非注释条目"))
+    print("        注：本仓库另有 mcp/mech-kit/ 直接调同一批脚本，不装插件也能用读图/内力图")
 else:
-    warn("未装 —— 9 个读图/出图工具不可用（mech_read_problem / mech_verify_reading / "
-         "mech_analyze 的静定判别 / mech_diagram …）")
-    print("        体积仅 1.2 MB，零视觉模型依赖。装法（脚本装不了，需创造模式）：")
-    print("          设置 → Agent 预设 → 创造入口（cordis 预设）→ 新开会话")
+    warn("插件未装 —— 只能用 mcp/mech-kit 的 4 个离线 op（足够覆盖读图与静定分析）")
+    print("        插件额外给的（都要联网或额外装）：second_reader 二次转写、viz_check 语义评审、")
+    print("        render_math 公式排版。赛规禁联网，这三项本来也用不了，可不装。")
+    print("        若要装（需创造模式）：")
     print("          plugin_manager → action: install_bundle")
     print("                       → target: %s" % os.path.join(ROOT, "plugins", "dsh-mech-workbench"))
-    print("        注：second_reader 走云端 API（硅基流动/智谱/DeepSeek/商汤/Gemini），赛时须禁用；")
-    print("            其余工具纯 Pillow/numpy，完全离线。")
 
 # ───────────────────────── 8. 真跑自检 ─────────────────────────
-print("\n=== 8. 跑自检（这两个会起真进程）===")
-for name in ("test/selftest.py", "test/handshake.py"):
-    sp = os.path.join(ROOT, "mcp", "mech-model", name)
+print("\n=== 8. 跑自检（这些会起真进程）===")
+SELFTESTS = [
+    ("mech-model/selftest", os.path.join(ROOT, "mcp", "mech-model", "test", "selftest.py")),
+    ("mech-model/handshake", os.path.join(ROOT, "mcp", "mech-model", "test", "handshake.py")),
+    ("mech-kit/selftest", os.path.join(ROOT, "mcp", "mech-kit", "test", "selftest.py")),
+]
+for label, sp in SELFTESTS:
     if not os.path.isfile(sp):
-        bad("缺 %s" % name)
+        bad("缺 %s" % label)
         continue
     env = dict(os.environ, PYTHONIOENCODING="utf-8")
     p = subprocess.run([sys.executable, sp], cwd=ROOT,
                        capture_output=True, timeout=300, env=env)
     tail = [l for l in p.stdout.decode("utf-8", "replace").splitlines() if l.strip()][-1:]
     if p.returncode == 0:
-        ok("%s -> %s" % (name, tail[0] if tail else "ok"))
+        ok("%s -> %s" % (label, tail[0] if tail else "ok"))
     else:
-        bad("%s 退出码 %d | %s" % (name, p.returncode,
+        bad("%s 退出码 %d | %s" % (label, p.returncode,
                                    (tail[0] if tail else p.stderr.decode('utf-8', 'replace')[-160:])))
 
 # ───────────────────────── 汇总 ─────────────────────────
