@@ -1,5 +1,5 @@
 {
-  "tested": "0.2.1-rc.5",
+  "tested": "0.2.2-rc.1",
   "tested_on": "2026-11-06",
   "platform": "win-x64",
   "channel": "nightly",
@@ -29,5 +29,18 @@
     "3) 打开会话确认 mcp__mech-model / mcp__mech-kit 出现（没出现就重启 DSH）",
     "4) MCP 全没出来 = cordis.patch.yml 的 insert 结构变了：备份后重跑 setup.ps1，按报错改条目",
     "5) 仍不行就用 rollback_installer 回退，别在赛前硬扛"
-  ]
+  ],
+  "previous": "0.2.1-rc.5",
+  "upgrade_verified": {
+    "method": "scripts/dsh_update.ps1 -Apply（结束 DSH 进程树 -> 等目录解锁 -> 静默安装）",
+    "failed_before": "更新器内直接点更新失败 5 次，均为 MoveFileExW / Windows error 32（目录被自身进程占用）",
+    "result": {
+      "version": "0.2.1-rc.5 -> 0.2.2-rc.1",
+      "cordis_patch_yml": "SHA256 未变（3BC4916F...），宿主未重写配置 —— MCP insert 结构兼容",
+      "verify_setup": "7 个 MCP 全部 spawn 成功，结论「全部就绪」，exit 0",
+      "preflight": "PASS 11 / WARN 28 / FAIL 0（唯一的 WARN 是本文件版本号比对）",
+      "selftests": "mech-model PASS 60 / mech-kit PASS 9",
+      "host_change_noted": "注册表 DisplayName 由「DeepSeek Harness <版本>」改为「DeepSeek Harness」，版本只在 DisplayVersion 里；preflight 按 DisplayName 含 DeepSeek Harness 匹配，仍正常"
+    }
+  }
 }
