@@ -1,0 +1,33 @@
+{
+  "tested": "0.2.1-rc.5",
+  "tested_on": "2026-11-06",
+  "platform": "win-x64",
+  "channel": "nightly",
+  "update_feed": "https://download.deepseek.com/dsh-desk/feeds/win-x64/nightly.yml",
+  "download_page": "https://download.deepseek.com/desktop/dsh-latest-windows-x64.exe",
+  "verified_latest": {
+    "version": "0.2.2-rc.1",
+    "release_date": "2026-11-04T09:31:49Z",
+    "size_bytes": 293425336,
+    "etag": "ecd1d9880f68ec91a63b4936163bfc44",
+    "note": "官网 dsh-latest-windows-x64.exe 与 nightly 的 0.2.2-rc.1 安装包是同一个文件（size 与 ETag 均一致）"
+  },
+  "installed_size_bytes": 289408544,
+  "rollback_installer": "%LOCALAPPDATA%\\@deepseek-aidsh-desktop-updater\\deepseek-harness-0.2.1-rc.5-win-x64.exe",
+  "repo_depends_on": [
+    "~/.dsh/cordis.patch.yml 里 insert 的 MCP 条目结构（id / type / options）",
+    "~/.dsh/skills/ 目录被扫描并加载",
+    "~/.dsh/secrets/media-tools.env 与 ~/.dsh/.credentials.yaml 的 key 读取路径"
+  ],
+  "repo_does_not_depend_on": [
+    "插件 bundle 接口（mcp/mech-kit 直接调 plugins/dsh-mech-workbench/scripts/*.py，绕过宿主）",
+    "profile .generations 布局（只有装插件才会用到）"
+  ],
+  "post_upgrade": [
+    "1) 先跑 scripts/preflight.py —— 第 10 节比对版本，其余节查文件/自检",
+    "2) 再跑 scripts/verify_setup.py —— 它会真的 spawn 每个 MCP，确认 cordis.patch.yml 仍被接受",
+    "3) 打开会话确认 mcp__mech-model / mcp__mech-kit 出现（没出现就重启 DSH）",
+    "4) MCP 全没出来 = cordis.patch.yml 的 insert 结构变了：备份后重跑 setup.ps1，按报错改条目",
+    "5) 仍不行就用 rollback_installer 回退，别在赛前硬扛"
+  ]
+}

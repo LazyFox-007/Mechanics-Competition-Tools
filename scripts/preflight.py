@@ -266,6 +266,69 @@ for label, sp in SELFTESTS:
         bad("%s 退出码 %d | %s" % (label, p.returncode,
                                    (tail[0] if tail else p.stderr.decode('utf-8', 'replace')[-160:])))
 
+# ───────────────────────── 10. DSH 版本护栏 ─────────────────────────
+print("\n=== 10. DSH 宿主版本（换环境最容易在这里出问题）===")
+
+
+def _installed_dsh_version():
+    """优先读注册表 DisplayVersion；退路读安装目录可执行文件的版本信息。"""
+    try:
+        import winreg
+    except ImportError:
+        return None, "非 Windows，跳过"
+    roots = [(winreg.HKEY_CURRENT_USER, r"Software\Microsoft\Windows\CurrentVersion\Uninstall"),
+             (winreg.HKEY_LOCAL_MACHINE, r"Software\Microsoft\Windows\CurrentVersion\Uninstall"),
+             (winreg.HKEY_LOCAL_MACHINE,
+              r"Software\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall")]
+    for hive, sub in roots:
+        try:
+            k = winreg.OpenKey(hive, sub)
+        except OSError:
+            continue
+        for i in range(winreg.QueryInfoKey(k)[0]):
+            try:
+                name = winreg.EnumKey(k, i)
+                sk = winreg.OpenKey(k, name)
+                try:
+                    dn = winreg.QueryValueEx(sk, "DisplayName")[0]
+                except OSError:
+                    continue
+                if "DeepSeek Harness" in str(dn):
+                    try:
+                        ver = winreg.QueryValueEx(sk, "DisplayVersion")[0]
+                    except OSError:
+                        ver = None
+                    if ver:
+                        return str(ver), str(dn)
+            except OSError:
+                continue
+    return None, "注册表里没找到 DeepSeek Harness"
+
+
+_tested_path = os.path.join(ROOT, "dsh", "TESTED_DSH.json")
+_tested = {}
+if os.path.isfile(_tested_path):
+    try:
+        _tested = json.load(io.open(_tested_path, encoding="utf-8"))
+    except Exception as e:  # noqa: BLE001
+        bad("dsh/TESTED_DSH.json 解析失败: %r" % (e,))
+
+_have, _where = _installed_dsh_version()
+_want = _tested.get("tested")
+print("  实测通过版本 : %s" % (_want or "(未登记)"))
+print("  本机已装版本 : %s   [%s]" % (_have or "未检出", _where))
+if not _want:
+    warn("仓库没登记实测版本（dsh/TESTED_DSH.json 缺失）")
+elif not _have:
+    warn("查不到本机 DSH 版本 —— 换环境后务必手跑 setup.ps1 -Verify")
+elif _have == _want:
+    ok("版本与本仓库实测版本一致")
+else:
+    warn("版本不一致：仓库实测 %s，本机 %s —— 升级/降级后必须按 docs/DSH兼容性.md 复验"
+         % (_want, _have))
+    for line in (_tested.get("post_upgrade") or []):
+        print("         · %s" % line)
+
 # ───────────────────────── 汇总 ─────────────────────────
 print("\n" + "=" * 46)
 print("PASS %d  WARN %d  FAIL %d" % (PASS, WARN, FAIL))
