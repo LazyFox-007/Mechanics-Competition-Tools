@@ -54,11 +54,41 @@ profile 的 `.generations` 布局也只有装插件时才涉及。
 更新器缓存里已经有当前版本的完整安装包，**先把它复制出来**（缓存会被自动清理）：
 
 ```
-%LOCALAPPDATA%\@deepseek-aidsh-desktop-updater\deepseek-harness-0.2.1-rc.5-win-x64.exe
+%LOCALAPPDATA%\@deepseek-aidsh-desktop-updater\pending\deepseek-harness-0.2.1-rc.5-win-x64.exe
 ```
 
 复制到与仓库同级的目录（如 `D:\mechanics-competition-tools-rollback\`），
 并记下文件名里的版本号。
+
+### 装不上：`MoveFileExW` / Windows error 32
+
+**症状**：点更新、转一圈、版本没变；更新器缓存里堆出 `installer-logs\directory-failure-*.log`。
+
+**原因**：NSIS 安装器要先把 `Programs\DeepSeek Harness` 改名成
+`DeepSeek Harness.old-{GUID}` 再铺新文件。DSH 自己开着 6 个进程（主进程 +
+`--type=gpu-process` + `--type=renderer` + `--type=utility` + `--expose-internals`，
+后者还挂着二三十个 MCP 子进程），目录被句柄锁死 → `error 32`，安装器重试 10 次全失败。
+
+**和网络/权限/签名无关**：`pending\update-info.json` 里的 `sha512` 与官方 feed 一致就说明包是好的。
+
+**一键处理**（在**独立的** PowerShell 窗口里跑，因为它会结束 DSH）：
+
+```powershell
+# 先体检，不动任何进程
+pwsh -File scripts\dsh_update.ps1
+
+# 确认无误后执行：结束进程树 -> 等解锁 -> 静默安装 -> 复核版本
+pwsh -File scripts\dsh_update.ps1 -Apply
+```
+
+脚本做四件事：① 列占用进程与历史失败日志 ② 结束 DSH 整棵进程树（含 MCP 子进程）
+③ 轮询到目录可独占打开（`TimeoutSec` 默认 60 秒）④ 跑安装器 `-Wait` 并比对注册表版本，
+成功后自动重启 DSH。
+
+**若仍报「目录被占用」**：注销一次 Windows 再登录（比重启快），然后重跑 `-Apply`。
+
+> 为什么不在应用内点「重启并更新」：那条路会复用同一个安装器，而它没有先确保所有
+> 子进程退干净，于是每次都卡在同一处。手动 `-Apply` 至少能把进程树杀干净再装。
 
 ### 升级后：按顺序跑这四步
 
