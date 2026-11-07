@@ -1,5 +1,8 @@
 # mechanics-competition-tools
 
+> **现场解题的 AI 请先读 [AGENTS.md](AGENTS.md)** —— 那是强制要求与红线；
+> 本文件是给人看的仓库说明。
+
 「国产AI大模型辅助理论力学与材料力学解题」赛题的**工具与配置仓库**。
 
 目标很简单：换一台机器，`git clone` + 跑一个脚本，把力学/数学求解能力装回来。
@@ -152,10 +155,10 @@ pwsh -File setup.ps1 -Competition
 | 读题 | `document` 的 `pdf_text` / `pdf_render`，或直接看图 | 读错一个数整题报废 |
 | 读公式下标 | `mech-io` 的 `pdf_page_crop`（300 dpi 局部） | 整页渲染再裁会糊，且容易按错比例 |
 | 符号推导 | `mcp__sympy__*` | 32 个工具，能出 LaTeX，方便写进答案 |
-| 内力图 / 静定反力 | 插件 `mech_analyze` / `mech_diagram` | 自动出图 + 8 项校核，直接当「校核」得分点 |
+| 内力图 / 静定反力 | `mech-kit` 的 `analyze` / `diagram` | 自动出图 + 8 项校核，直接当「校核」得分点 |
 | 验算 | `undergrad-physics-skill` 的 F/B/L 组合 + `mech-io` 的 `scan_extremum` / `numeric_compare` | 过程分 20% 靠这个 |
 | 量纲检查 | 技能里的 F 方法 + `sympy-physics` 的 `unit_check` | 表达分 10% 靠这个 |
-| 出图后自检 | `mech-io` 的 `plot_audit` + 插件 `viz_check` | 缺字形/越界靠前者，构图靠后者 |
+| 出图后自检 | `mech-io` 的 `plot_audit` / `fig_lint` | 缺字形、文字越界、多图重复都能查 |
 | 交付打包 | `mech-io` 的 `html_to_pdf` / `submission_pack` | 报告 PDF 与清单哈希不用手搓 |
 
 详细映射见 [docs/工具映射.md](docs/工具映射.md)。
