@@ -261,6 +261,30 @@ def e_moment(ax, el):
                 lb, fontsize=13, ha="center", va="center", zorder=9)
 
 
+def e_taper(ax, el):
+    """圆台/锥台（侧视）。at=底心，h=高，r1=底半宽，r2=顶半宽；angle=轴线方向(默认90=竖直向上)"""
+    x, y = el["at"]
+    h = el.get("h", 3.0)
+    r1 = el.get("r1", 1.0)
+    r2 = el.get("r2", 0.5)
+    ang = math.radians(el.get("angle", 90))
+    ux, uy = math.cos(ang), math.sin(ang)          # 轴向单位矢
+    px, py = -uy, ux                               # 横向单位矢
+    bx1 = (x + px * r1, y + py * r1)
+    bx2 = (x - px * r1, y - py * r1)
+    tx1 = (x + ux * h + px * r2, y + uy * h + py * r2)
+    tx2 = (x + ux * h - px * r2, y + uy * h - py * r2)
+    poly = Polygon([bx1, bx2, tx2, tx1], closed=True,
+                   fill=bool(el.get("fill")), fc=el.get("fill") or "none",
+                   alpha=el.get("alpha", 0.28), lw=el.get("lw", LW),
+                   ec=CLR, zorder=4)
+    ax.add_patch(poly)
+    if el.get("label"):
+        _txt(ax, x + ux * h * 0.5 + px * (max(r1, r2) + 0.25),
+             y + uy * h * 0.5 + py * (max(r1, r2) + 0.25),
+             el["label"], fontsize=12, ha="left", va="center", zorder=9)
+
+
 def e_rope(ax, el):
     p1, p2 = el["p1"], el["p2"]
     ax.plot([p1[0], p2[0]], [p1[1], p2[1]], color=CLR, lw=1.4,
@@ -303,7 +327,12 @@ def e_block(ax, el):
     x, y = el["at"]
     w, h = el.get("w", 1.0), el.get("h", 0.6)
     ang = el.get("angle", 0)
-    box = Rectangle((x - w / 2, y - h / 2), w, h, fill=False, lw=LW, ec=CLR)
+    fill = el.get("fill")
+    box = Rectangle((x - w / 2, y - h / 2), w, h,
+                    fill=bool(fill), fc=fill or "none",
+                    alpha=el.get("alpha", 0.35 if fill else 1.0),
+                    lw=el.get("lw", LW), ec=el.get("ec", CLR),
+                    ls=el.get("ls", "-"))
     tr = matplotlib.transforms.Affine2D().rotate_deg_around(x, y, ang) + ax.transData
     box.set_transform(tr)
     ax.add_patch(box)
@@ -351,7 +380,51 @@ DISPATCH = {
     "node": e_node, "force": e_force, "dist": e_dist, "moment": e_moment,
     "dim": e_dim, "block": e_block, "circle": e_circle, "hatch": e_hatch,
     "text": e_text, "angle": e_angle, "rope": e_rope, "incline": e_incline,
+    "taper": e_taper,
 }
+
+
+def check_layout(fig, ax):
+    """渲染后自检：标签互相重叠 / 超出画布 / 缺字形。返回警告列表。"""
+    from matplotlib.transforms import Bbox as _BB
+    fig.canvas.draw()
+    try:
+        ren = fig.canvas.get_renderer()
+    except Exception:  # noqa: BLE001
+        return []
+    items = []
+    for t_ in ax.texts:
+        s = (t_.get_text() or "").strip()
+        if not s or s.startswith("$") is False and not s:
+            continue
+        try:
+            bb = t_.get_window_extent(renderer=ren)
+        except Exception:  # noqa: BLE001
+            continue
+        if bb.width <= 0 or bb.height <= 0:
+            continue
+        items.append((s, bb))
+    warns = []
+    for i in range(len(items)):
+        for j in range(i + 1, len(items)):
+            s1, b1 = items[i]
+            s2, b2 = items[j]
+            inter = _BB.intersection(b1, b2)
+            if inter is None:
+                continue
+            ai = max(0.0, inter.width) * max(0.0, inter.height)
+            small = min(b1.width * b1.height, b2.width * b2.height)
+            if small > 0 and ai / small > 0.12:
+                warns.append("标签重叠 %2d%%  「%s」×「%s」"
+                             % (round(ai / small * 100), s1[:18], s2[:18]))
+    try:
+        fx = fig.get_window_extent(ren)
+        for s, bb in items:
+            if bb.x0 < fx.x0 - 2 or bb.x1 > fx.x1 + 2 or bb.y0 < fx.y0 - 2 or bb.y1 > fx.y1 + 2:
+                warns.append("超出画布  「%s」" % s[:24])
+    except Exception:  # noqa: BLE001
+        pass
+    return warns
 
 
 def main():
@@ -417,11 +490,27 @@ def main():
 
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     fig.tight_layout()
-    fig.savefig(a.out, dpi=a.dpi, bbox_inches="tight", facecolor="white")
+    warns = check_layout(fig, ax)
+    import warnings as _w
+    with _w.catch_warnings(record=True) as caught:
+        _w.simplefilter("always")
+        fig.savefig(a.out, dpi=a.dpi, bbox_inches="tight", facecolor="white")
+    glyph = [str(c.message) for c in caught
+             if "missing from current font" in str(c.message) or "Glyph" in str(c.message)]
     plt.close(fig)
     print("已出图: %s  (%dx%d)" % (a.out, *[int(v * a.dpi) for v in fig.get_size_inches()]))
     print("字体: %s" % (FONT or "未找到中文字体，中文可能显示为方块"))
     print("元素 %d 个，类型: %s" % (len(els), sorted({e.get('type') for e in els})))
+    if glyph:
+        print("缺字形警告 %d 条（会渲染成方块）:" % len(glyph))
+        for g in sorted(set(glyph))[:6]:
+            print("   ", g[:110])
+    if warns:
+        print("版式警告 %d 条:" % len(warns))
+        for w in warns[:12]:
+            print("   ", w)
+    else:
+        print("版式自检: 无标签重叠、无出界 ✓")
     return 0
 
 

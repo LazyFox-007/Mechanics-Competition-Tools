@@ -108,6 +108,7 @@ def search(kb: Path, query: str, top: int = 5):
         # 来源权重：判据卡/清单 > 自检 > 教材 > 外部手册(PDF)
         fn = rec["file"]; w = 1.0
         if "04-题型判据卡" in fn or "03-提高题建模清单" in fn: w = 2.2
+        elif "符号" in fn or "键盘码" in fn: w = 2.6      # 现场高频查询，最高权重
         elif "02-解题后自检" in fn or "01-速查" in fn: w = 1.8
         elif "mechanics-map" in fn: w = 1.4
         elif fn.lower().endswith(".pdf"): w = 0.5
