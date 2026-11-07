@@ -1,5 +1,7 @@
 # mechanics-competition-tools
 
+> **打不出希腊字母？查 [符号表.md](符号表.md)** —— 一页看完，`theta` 代替 θ。
+>
 > **现场解题的 AI 请先读 [AGENTS.md](AGENTS.md)** —— 那是强制要求与红线；
 > 本文件是给人看的仓库说明。
 
