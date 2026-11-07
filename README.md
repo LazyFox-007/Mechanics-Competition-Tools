@@ -160,6 +160,7 @@ pwsh -File setup.ps1 -Competition
 | 量纲检查 | 技能里的 F 方法 + `sympy-physics` 的 `unit_check` | 表达分 10% 靠这个 |
 | 出图后自检 | `mech-io` 的 `plot_audit` / `fig_lint` | 缺字形、文字越界、多图重复都能查 |
 | 交付打包 | `mech-io` 的 `html_to_pdf` / `submission_pack` | 报告 PDF 与清单哈希不用手搓 |
+| **纸质题录入** | `scripts/draw_figure.py` | 按文字描述画示意图，供人核对纸面图（见 [docs/现场录入协议.md](docs/现场录入协议.md)） |
 
 详细映射见 [docs/工具映射.md](docs/工具映射.md)。
 
